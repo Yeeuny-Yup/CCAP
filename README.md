@@ -35,7 +35,7 @@ CMC-ASP evaluates channel importance by comparing channel responses under **moda
 ### 1) Paired input and three masking conditions
 
 <p align="center">
-  <img src="eq3.png" width="400" alt="Channel response statistic with L1 norm"/>
+  <img src="Eq/eq3.png" width="400" alt="Channel response statistic with L1 norm"/>
 </p>
 
 ### 2) Channel response statistic
@@ -44,7 +44,7 @@ For a target layer (or filter) $F$ and output channel $C$, let $O_{F,C}(\cdot)$ 
 CMC-ASP summarizes activation magnitude using the L1 norm and computes dataset-level expectations over a calibration set $D_{\mathrm{cal}}$.
 
 <p align="center">
-  <img src="eq4_5.png" width="350" alt="Normalized sensitivities for Noisy and BCM"/>
+  <img src="Eq/eq4_5.png" width="350" alt="Normalized sensitivities for Noisy and BCM"/>
 </p>
 
 ### 3) Normalized sensitivities and final importance
@@ -53,7 +53,7 @@ CMC-ASP computes normalized sensitivities by measuring how well each channel res
 The final importance score is obtained by a symmetric aggregation of the two sensitivities:
 
 <p align="center">
-  <img src="eq6.png" width="350" alt="Final importance score"/>
+  <img src="Eq/eq6.png" width="350" alt="Final importance score"/>
 </p>
 
 A high $IS_{F,C}$ indicates that a channel responds **consistently** under both zero-masked conditions relative to the multimodal reference, suggesting **modality-shared / fusion-relevant** behavior.

@@ -8,8 +8,8 @@ Specifically, it implements:
 - **Hook-based activation extraction** at target layers,
 - **CMC-ASP sensitivities** and **importance scores** defined in the paper.
 
-> ⚠️ Scope: This repo focuses on **scoring only** (activation collection + sensitivity/importance computation).  
-> Actual pruning / model surgery / fine-tuning pipelines are intentionally **not** included.
+> Scope: This repo focuses on **scoring only** (activation collection + sensitivity/importance computation).  
+
 
 <p align="center">
   <img src="fig1.png" width="950" alt="CMC-ASP overview"/>

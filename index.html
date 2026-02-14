@@ -211,8 +211,10 @@
     /* Table */
     .table-wrap{
       overflow: auto;
+      overflow-x: auto;                 /* ✅ 추가 */
       -webkit-overflow-scrolling: touch;
     }
+
 
     /* We intentionally DO NOT show thead (column headers) */
     thead{ display:none; }
@@ -246,8 +248,8 @@
       z-index: 3;
       background: rgba(18,26,52,0.96);
       border-right: 1px solid rgba(255,255,255,0.10);
-      min-width: 170px;
-      max-width: 220px;
+      min-width: 100px;
+      max-width: 130px;
     }
     .sample-id{
       font-weight: 700;

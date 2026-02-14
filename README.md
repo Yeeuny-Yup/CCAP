@@ -61,4 +61,16 @@ CMC-ASP summarizes activation magnitude using the L1 norm and computes dataset-l
   CMC-ASP sensitivity and importance computation:
   \(S^{\text{Noisy}}, S^{\text{BCM}}, IS\).
 
+---
 
+## Implementation Notes (Paper-faithful details)
+
+- **Exact statistic used:** for each sample $x$, we compute channel-wise $\|O_{F,C}(x)\|_1$ by summing absolute activations over all non-channel dimensions. We then estimate $\mathbb{E}[\|O_{F,C}(x)\|_1]$ over $D_{\mathrm{cal}}$.
+
+- **Unbiased expectation over samples:** accumulation is performed by summing $\|O_{F,C}(x)\|_1$ over **all samples** and dividing by the **total number of samples**. This ensures correctness even when the last batch has a different size.
+
+- **Zero-masking location:** modality-wise zero-masking is applied **at the input** (Noisy-only / BCM-only), matching the paper definition.
+
+- **Numerical stability:** $\epsilon$ is included only to avoid division-by-zero when $\mathbb{E}[\|O^{\mathrm{Multi}}_{F,C}(x)\|_1]$ is very small; it does not change the intended scoring behavior.
+
+---

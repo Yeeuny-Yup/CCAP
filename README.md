@@ -62,7 +62,7 @@ A high $IS_{F,C}$ indicates that a channel responds **consistently** under both 
 
 ## Implementation Notes (Paper-faithful details)
 
-- **Exact statistic used:** for each sample $x$, we compute channel-wise $|O_{F,C}(x)|_1$ by summing absolute activations over all non-channel dimensions. We then estimate $E[|O_{F,C}(x)|_1]$ over $D_{cal}$.
+- **Exact statistic used:** for each sample $x$, we compute channel-wise $|O_{F,C}(x)|_1$ by summing absolute activations over all non-channel dimensions. We then estimate $E[|O^{F,C}(x)|_1]$ over $D_{cal}$.
 
 - **Unbiased expectation over samples:** accumulation is performed by summing $|O_{F,C}(x)|_1$ over **all samples** and dividing by the **total number of samples**. This ensures correctness even when the last batch has a different size.
 

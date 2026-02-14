@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CMC-ASP — Multimodal Speech Enhancement (Audio + Spectrogram Demos)</title>
 
+  <!-- Optional: nicer font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,6 +13,8 @@
   <style>
     :root{
       --bg: #0b1020;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.09);
       --text: rgba(255,255,255,0.92);
       --muted: rgba(255,255,255,0.66);
       --line: rgba(255,255,255,0.12);
@@ -20,6 +23,10 @@
       --warn:#ffcc66;
       --shadow: 0 10px 30px rgba(0,0,0,0.35);
       --radius: 18px;
+
+      --cellW: 260px;       /* cell width */
+      --specH: 160px;       /* spectrogram height (ALL equal) */
+      --audioH: 36px;
     }
 
     *{ box-sizing: border-box; }
@@ -59,10 +66,21 @@
       align-items: center;
       justify-content: space-between;
     }
-    .brand{ display:flex; flex-direction: column; gap: 4px; }
-    .brand .title{ font-size: 14px; letter-spacing: 0.2px; font-weight: 700; }
-    .brand .subtitle{ font-size: 12px; color: var(--muted); }
-    .navchips{ display:flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .brand{
+      display:flex; flex-direction: column; gap: 4px;
+    }
+    .brand .title{
+      font-size: 14px;
+      letter-spacing: 0.2px;
+      font-weight: 700;
+    }
+    .brand .subtitle{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .navchips{
+      display:flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
+    }
     .chip{
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.06);
@@ -111,7 +129,9 @@
       align-items: center;
       justify-content: space-between;
     }
-    .badges{ display:flex; gap: 8px; flex-wrap: wrap; }
+    .badges{
+      display:flex; gap: 8px; flex-wrap: wrap;
+    }
     .badge{
       font-size: 12px;
       padding: 7px 10px;
@@ -121,7 +141,7 @@
       color: var(--text);
       display:flex; gap: 8px; align-items: center;
     }
-    .dot{ width:8px; height:8px; border-radius: 50%; background: var(--accent); display:inline-block; }
+    .dot{ width:8px; height:8px; border-radius: 50%; background: var(--accent); display:inline-block;}
     .dot.green{ background: var(--accent2); }
     .dot.warn{ background: var(--warn); }
 
@@ -141,14 +161,23 @@
     .toggle input{ accent-color: var(--accent); }
 
     /* Sections */
-    section{ margin-top: 26px; scroll-margin-top: 78px; }
+    section{
+      margin-top: 26px;
+      scroll-margin-top: 78px;
+    }
     .section-head{
       display:flex; align-items: flex-end; justify-content: space-between;
       gap: 12px; flex-wrap: wrap;
     }
-    .section-head h2{ margin: 0; font-size: 18px; letter-spacing: -0.2px; }
-    .section-head .hint{ color: var(--muted); font-size: 12px; }
-
+    .section-head h2{
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.2px;
+    }
+    .section-head .hint{
+      color: var(--muted);
+      font-size: 12px;
+    }
     .card{
       margin-top: 12px;
       border: 1px solid var(--line);
@@ -157,7 +186,9 @@
       box-shadow: var(--shadow);
       overflow: hidden;
     }
-    .card-pad{ padding: 18px 18px; }
+    .card-pad{
+      padding: 18px 18px;
+    }
     .card-pad p, .card-pad li{
       margin: 0;
       color: var(--muted);
@@ -165,7 +196,10 @@
       line-height: 1.75;
     }
     .card-pad p + p{ margin-top: 10px; }
-    .card-pad ol{ margin: 10px 0 0 18px; padding: 0; }
+    .card-pad ol{
+      margin: 10px 0 0 18px;
+      padding: 0;
+    }
     .card-pad li{ margin: 8px 0; }
     .card-pad a{
       color: rgba(255,255,255,0.90);
@@ -175,7 +209,14 @@
     .card-pad a:hover{ color: #fff; border-bottom-color: rgba(124,92,255,0.7); }
 
     /* Table */
-    .table-wrap{ overflow: auto; -webkit-overflow-scrolling: touch; }
+    .table-wrap{
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* We intentionally DO NOT show thead (column headers) */
+    thead{ display:none; }
+
     table{
       width: 100%;
       border-collapse: separate;
@@ -183,121 +224,99 @@
       min-width: 0;
     }
 
-    /* 2 header rows */
-    thead tr.cols th{
-      position: sticky;
-      top: 0;
-      z-index: 3;
-      background: rgba(15,22,44,0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--line);
-      font-size: 12px;
-      color: var(--muted);
-      text-align: left;
-      padding: 12px 12px;
-      white-space: nowrap;
-    }
-    thead tr.cols2 th{
-      position: sticky;
-      top: 38px;
-      z-index: 2;
-      background: rgba(15,22,44,0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--line);
-      font-size: 12px;
-      color: var(--muted);
-      text-align: left;
-      padding: 12px 12px;
-      white-space: nowrap;
-    }
-
-    th.sticky{
-      position: sticky;
-      left: 0;
-      z-index: 4;
-      background: rgba(15,22,44,0.96);
-      border-right: 1px solid rgba(255,255,255,0.10);
-      min-width: 150px;
-      max-width: 200px;
-      white-space: nowrap;
-    }
-
     tbody td{
       border-bottom: 1px solid rgba(255,255,255,0.07);
-      padding: 12px 12px;
+      padding: 14px 14px;
       vertical-align: top;
       background: rgba(255,255,255,0.02);
     }
-    tbody tr.pair-even td{ background: rgba(255,255,255,0.04); }
+    tbody tr:nth-child(4n+1) td,
+    tbody tr:nth-child(4n+2) td{
+      background: rgba(255,255,255,0.03);
+    }
+    tbody tr:nth-child(4n+3) td,
+    tbody tr:nth-child(4n+4) td{
+      background: rgba(255,255,255,0.05);
+    }
 
+    /* Sticky first column (Utterance cell) */
     td.sticky{
       position: sticky;
       left: 0;
-      z-index: 1;
+      z-index: 3;
       background: rgba(18,26,52,0.96);
       border-right: 1px solid rgba(255,255,255,0.10);
-      min-width: 150px;
-      max-width: 200px;
+      min-width: 170px;
+      max-width: 220px;
     }
-    .sample-id{ font-weight: 700; font-size: 12px; margin-bottom: 6px; line-height: 1.15; }
-    .sample-sub{ font-size: 11px; color: var(--muted); line-height: 1.4; }
+    .sample-id{
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .sample-sub{
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .rowhint{
+      margin-top: 10px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      border-top: 1px dashed rgba(255,255,255,0.14);
+      padding-top: 10px;
+      line-height: 1.5;
+    }
 
-    /* Cells */
+    /* Cell content */
     .cell{
+      width: var(--cellW);
+      max-width: 100%;
       display:flex;
       flex-direction: column;
-      gap: 8px;
-      align-items: flex-start;
-      width: 230px;
-      max-width: 230px;
-      padding: 10px;                 /* padding inside cell area */
-      border-radius: 14px;
-      background: rgba(0,0,0,0.06);
-      border: 1px solid rgba(255,255,255,0.06);
+      gap: 10px;
+      align-items: stretch;
     }
 
-    /* NEW: per-item caption above WAV / Spectrogram */
-    .cap{
-      font-size: 11px;
-      font-weight: 700;
+    /* Capsule tag */
+    .capline{
+      display:flex;
+      align-items: center;
+      gap: 10px;
       color: rgba(255,255,255,0.78);
-      letter-spacing: 0.2px;
-      line-height: 1.2;
-      margin-top: 2px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: -0.1px;
     }
-    .cap .tag{
-      display:inline-block;
+    .pill{
       font-size: 10px;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: 0.6px;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.60);
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      padding: 2px 6px;
+      color: rgba(255,255,255,0.70);
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.05);
+      padding: 3px 7px;
       border-radius: 999px;
-      margin-right: 8px;
     }
 
     audio{
-      width: 230px;
-      max-width: 100%;
+      width: 100%;
+      height: var(--audioH);
       border-radius: 999px;
       outline: none;
-      margin-top: 2px;
     }
 
-    /* Spectrogram: unify size */
+    /* Spectrogram: ALL same size */
     .spec{
-      width: 230px;
-      height: 120px;
-      max-width: 100%;
+      width: 100%;
+      height: var(--specH);
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.14);
       box-shadow: 0 6px 18px rgba(0,0,0,0.30);
       cursor: zoom-in;
       background: rgba(0,0,0,0.18);
-      object-fit: contain;
+      object-fit: contain; /* keeps full spectrogram visible */
       display: block;
     }
 
@@ -307,14 +326,16 @@
       text-decoration: none;
       border-bottom: 1px dashed rgba(255,255,255,0.25);
       padding-bottom: 1px;
+      width: fit-content;
     }
     .filelink:hover{ color: rgba(255,255,255,0.90); }
 
-    /* Highlight (CMC-ASP) */
-    .cell.highlight{
+    /* Highlight CMC-ASP cell */
+    .highlight{
+      padding: 12px;
+      border-radius: 16px;
       border: 1px solid rgba(124,92,255,0.55);
       background: rgba(124,92,255,0.08);
-      box-shadow: 0 10px 26px rgba(124,92,255,0.12);
     }
 
     /* Modal */
@@ -361,7 +382,10 @@
       user-select:none;
     }
     .modal-close:hover{ transform: translateY(-1px); border-color: rgba(124,92,255,0.55); }
-    .modal-img-wrap{ padding: 16px; overflow:auto; }
+    .modal-img-wrap{
+      padding: 16px;
+      overflow:auto;
+    }
     .modal-img{
       width: 100%;
       height: auto;
@@ -407,7 +431,7 @@
       <div class="meta-row">
         <div class="badges">
           <div class="badge"><span class="dot"></span> Ours: CMC-ASP</div>
-          <div class="badge"><span class="dot green"></span> Models: DCCRN [5] / MMINet [6] / LAU-Net [7]</div>
+          <div class="badge"><span class="dot green"></span> Models: Attention-based Early Fusion DCCRN [5] / MMINet [6] / LAU-Net [7]</div>
           <div class="badge"><span class="dot warn"></span> Samples: Male, Female</div>
         </div>
         <div class="toggles">
@@ -440,8 +464,12 @@
             using paired <i>audio</i> and <i>log-magnitude spectrograms</i>.
           </p>
           <p>
-            <b>How to read:</b> “Noisy ACM” and “BCM” are input signals. “Clean ACM (Label)” is the ground-truth reference label (AC microphone).
+            <b>How to read:</b> “Noisy ACM” and “BCM” are input signals. “Clean ACM” is the ground-truth reference label (AC microphone).
             Other columns are enhanced outputs produced by a pruned model (or corresponding baseline).
+          </p>
+          <p>
+            <b>Layout:</b> Each utterance is displayed in <b>two rows</b> to reduce horizontal scrolling.
+            (Top row: Inputs/Label/Ours, Bottom row: Baselines.)
           </p>
         </div>
       </div>
@@ -470,6 +498,7 @@
       </div>
     </section>
 
+    <!-- Comparison Table note -->
     <section id="comparison">
       <div class="section-head">
         <div>
@@ -483,6 +512,9 @@
             The spectrograms are log-scaled for visualization. All spectrogram thumbnails are rendered with a fixed size for consistent comparison.
             Click a spectrogram image to zoom in.
           </p>
+          <p>
+            <b>Note:</b> The global column headers are intentionally hidden. Each cell includes a caption (e.g., “WAV · Noisy ACM”, “Spectrogram · Noisy ACM”) for readability.
+          </p>
         </div>
       </div>
     </section>
@@ -493,7 +525,7 @@
       <div>
         <b>Notes</b><br/>
         • GitHub Pages is case-sensitive: keep <code>.PNG</code> exactly as uploaded.<br/>
-        • Each cell now shows captions above WAV and Spectrogram for readability.
+        • If any spectrogram is missing, it will hide automatically (fallbacks are used where specified).
       </div>
     </footer>
   </div>
@@ -512,25 +544,33 @@
   </div>
 
   <script>
+    /**
+     * Put this index.html at repository root:
+     *   - BASE should stay "" (empty)
+     * If you put index.html inside /WAV, set:
+     *   - const BASE = "..";
+     */
     const BASE = ""; // "" when index.html is at repo root
 
+    // Folder mapping (matches your uploaded structure)
     const MODELS = [
       { key: "DCCRN",  title: "Attention-based Early Fusion DCCRN", ref: "[5]",  wavDir: "WAV/DCCRN_wav",  specDir: "WAV/DCCRN_spectrogram" },
       { key: "MMINet", title: "MMINet",                               ref: "[6]",  wavDir: "WAV/MMINet_wav", specDir: "WAV/MMINet_spectrogram" },
       { key: "LAU-Net",title: "LAU-Net",                              ref: "[7]",  wavDir: "WAV/LAU-Net_wav",specDir: "WAV/LAU-Net_spectrogram" },
     ];
 
+    // Samples (display name changed, file id stays the same)
     const SAMPLES = [
       { id: "p00_u32", label: "Sample A", display: "Male" },
       { id: "p24_u25", label: "Sample B", display: "Female" },
     ];
 
-    // DO NOT change wav/png filenames here (as you requested)
+    // ✅ DO NOT TOUCH wav/png suffixes (as requested)
     const COLS_TOP = [
       { name: "Noisy ACM",          wavSuffix: "_noisy.wav",  specSuffix: "_noisy.PNG",    specFallback: "_noisy.PNG" },
       { name: "BCM",               wavSuffix: "_bcm.wav",    specSuffix: "_bcm.PNG" },
-      { name: "Clean ACM (Label)", wavSuffix: "_clean.wav",  specSuffix: "_acm.PNG",    specFallback: "_noisy.PNG" },
-      { name: "CMC-ASP",           wavSuffix: "_CMCASP.wav", specSuffix: "_cmcasp.PNG", highlight: true },
+      { name: "Clean ACM",         wavSuffix: "_clean.wav",  specSuffix: "_acm.PNG",      specFallback: "_noisy.PNG" },
+      { name: "CMC-ASP",           wavSuffix: "_CMCASP.wav", specSuffix: "_cmcasp.PNG",   highlight: true },
     ];
 
     const COLS_BOTTOM = [
@@ -545,6 +585,7 @@
     const toggleSpec = document.getElementById("toggleSpec");
     const toggleLinks = document.getElementById("toggleLinks");
 
+    // Modal
     const modal = document.getElementById("modal");
     const modalImg = document.getElementById("modalImg");
     const modalCaption = document.getElementById("modalCaption");
@@ -578,86 +619,85 @@
       });
     }
 
-    function makeCap(tagText, nameText){
-      const cap = document.createElement("div");
-      cap.className = "cap";
-      cap.innerHTML = `<span class="tag">${tagText}</span>${nameText}`;
-      return cap;
-    }
-
     function createCell(model, sampleId, col){
       const cell = document.createElement("div");
-      cell.className = "cell" + (col.highlight ? " highlight" : "");
+      cell.className = "cell";
+
+      // Caption: WAV
+      const capWav = document.createElement("div");
+      capWav.className = "capline";
+      capWav.innerHTML = `<span class="pill">WAV</span> <span>${col.name}</span>`;
+      cell.appendChild(capWav);
 
       const wavPath = joinPath(model.wavDir, `${sampleId}${col.wavSuffix}`);
-
-      // NEW: caption above WAV
-      cell.appendChild(makeCap("WAV", col.name));
-
       const audio = document.createElement("audio");
       audio.controls = true;
       audio.preload = "none";
       audio.src = wavPath;
       cell.appendChild(audio);
 
-      // Optional link
-      const link = document.createElement("a");
-      link.className = "filelink filelink-wav";
-      link.href = wavPath;
-      link.textContent = "open wav";
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.style.display = "none";
-      cell.appendChild(link);
+      // Optional link (hidden by default)
+      const linkWav = document.createElement("a");
+      linkWav.className = "filelink filelink-wav";
+      linkWav.href = wavPath;
+      linkWav.textContent = "open wav";
+      linkWav.target = "_blank";
+      linkWav.rel = "noopener";
+      linkWav.style.display = "none";
+      cell.appendChild(linkWav);
 
-      // Spectrogram
-      if (col.specSuffix){
-        const primary = joinPath(model.specDir, `${sampleId}${col.specSuffix}`);
+      // Caption: Spectrogram
+      const capSpec = document.createElement("div");
+      capSpec.className = "capline";
+      capSpec.innerHTML = `<span class="pill">Spectrogram</span> <span>${col.name}</span>`;
+      cell.appendChild(capSpec);
 
-        // NEW: caption above Spectrogram
-        cell.appendChild(makeCap("Spectrogram", col.name));
+      // Spectrogram image
+      const img = document.createElement("img");
+      img.className = "spec";
+      img.loading = "lazy";
+      img.alt = `${model.key} ${sampleId} ${col.name} spectrogram`;
 
-        const img = document.createElement("img");
-        img.className = "spec";
-        img.loading = "lazy";
-        img.alt = `${model.key} ${sampleId} ${col.name} spectrogram`;
-        img.src = primary;
+      const primary = joinPath(model.specDir, `${sampleId}${col.specSuffix}`);
+      img.src = primary;
 
-        if (col.specFallback){
-          const fallback = joinPath(model.specDir, `${sampleId}${col.specFallback}`);
-          img.onerror = () => {
-            if (img.src.endsWith(col.specSuffix)){
-              img.src = fallback;
-            } else {
-              img.style.display = "none";
-            }
-          };
-        } else {
-          img.onerror = () => { img.style.display = "none"; };
-        }
-
-        img.addEventListener("click", () => {
-          modalImg.src = img.src;
-          modalCaption.textContent = `${model.title} ${model.ref} · ${sampleId} · ${col.name}`;
-          modal.classList.add("open");
-        });
-
-        cell.appendChild(img);
-
-        const link2 = document.createElement("a");
-        link2.className = "filelink filelink-png";
-        link2.href = primary;
-        link2.textContent = "open png";
-        link2.target = "_blank";
-        link2.rel = "noopener";
-        link2.style.display = "none";
-        cell.appendChild(link2);
+      if (col.specFallback){
+        const fallback = joinPath(model.specDir, `${sampleId}${col.specFallback}`);
+        img.onerror = () => {
+          if (img.src.endsWith(col.specSuffix)){
+            img.src = fallback;
+          } else {
+            img.style.display = "none";
+            capSpec.style.display = "none";
+          }
+        };
       } else {
-        const note = document.createElement("div");
-        note.style.fontSize = "11px";
-        note.style.color = "rgba(255,255,255,0.55)";
-        note.textContent = "Spectrogram: N/A";
-        cell.appendChild(note);
+        img.onerror = () => {
+          img.style.display = "none";
+          capSpec.style.display = "none";
+        };
+      }
+
+      img.addEventListener("click", () => {
+        modalImg.src = img.src;
+        modalCaption.textContent = `${model.title} ${model.ref} · ${sampleId} · ${col.name}`;
+        modal.classList.add("open");
+      });
+
+      cell.appendChild(img);
+
+      const linkPng = document.createElement("a");
+      linkPng.className = "filelink filelink-png";
+      linkPng.href = primary;
+      linkPng.textContent = "open png";
+      linkPng.target = "_blank";
+      linkPng.rel = "noopener";
+      linkPng.style.display = "none";
+      cell.appendChild(linkPng);
+
+      // Highlight CMC-ASP
+      if (col.highlight){
+        cell.classList.add("highlight");
       }
 
       return cell;
@@ -674,7 +714,7 @@
           <h2>${model.title} <span style="color:rgba(255,255,255,0.75)">${model.ref}</span></h2>
           <div class="hint">Folder: <code>${model.wavDir}</code> &nbsp; | &nbsp; <code>${model.specDir}</code></div>
         </div>
-        <div class="hint">Each sample is displayed in 2 rows (Top: Inputs/Label/Ours, Bottom: Baselines).</div>
+        <div class="hint">Each utterance is shown in 2 rows (Top: Inputs/Label/Ours, Bottom: Baselines).</div>
       `;
       section.appendChild(head);
 
@@ -685,70 +725,43 @@
       wrap.className = "table-wrap";
 
       const table = document.createElement("table");
-
-      const thead = document.createElement("thead");
-
-      const trH1 = document.createElement("tr");
-      trH1.className = "cols";
-
-      const th0 = document.createElement("th");
-      th0.className = "sticky";
-      th0.rowSpan = 2;
-      th0.textContent = "Utterance";
-      trH1.appendChild(th0);
-
-      COLS_TOP.forEach(c => {
-        const th = document.createElement("th");
-        th.textContent = c.name;
-        trH1.appendChild(th);
-      });
-
-      const trH2 = document.createElement("tr");
-      trH2.className = "cols2";
-      COLS_BOTTOM.forEach(c => {
-        const th = document.createElement("th");
-        th.textContent = c.name;
-        trH2.appendChild(th);
-      });
-
-      thead.appendChild(trH1);
-      thead.appendChild(trH2);
-      table.appendChild(thead);
-
       const tbody = document.createElement("tbody");
 
-      SAMPLES.forEach((s, idx) => {
-        const pairEven = (idx % 2 === 1);
+      // For each sample: 2-row layout (top 4 cells, bottom 4 cells)
+      SAMPLES.forEach(s => {
+        const trTop = document.createElement("tr");
+        const trBot = document.createElement("tr");
 
-        const tr1 = document.createElement("tr");
-        if (pairEven) tr1.classList.add("pair-even");
-
-        const td0 = document.createElement("td");
-        td0.className = "sticky";
-        td0.rowSpan = 2;
-        td0.innerHTML = `
+        // sticky utterance cell spans 2 rows
+        const tdSticky = document.createElement("td");
+        tdSticky.className = "sticky";
+        tdSticky.rowSpan = 2;
+        tdSticky.innerHTML = `
           <div class="sample-id">${s.label}</div>
           <div class="sample-sub">${s.display}</div>
+          <div class="rowhint">
+            <b>Top:</b> Noisy/BCM/Clean/Ours<br/>
+            <b>Bottom:</b> PP/TP/BN/MANU
+          </div>
         `;
-        tr1.appendChild(td0);
+        trTop.appendChild(tdSticky);
 
+        // Top row cells
         COLS_TOP.forEach(c => {
           const td = document.createElement("td");
           td.appendChild(createCell(model, s.id, c));
-          tr1.appendChild(td);
+          trTop.appendChild(td);
         });
 
-        const tr2 = document.createElement("tr");
-        if (pairEven) tr2.classList.add("pair-even");
-
+        // Bottom row cells
         COLS_BOTTOM.forEach(c => {
           const td = document.createElement("td");
           td.appendChild(createCell(model, s.id, c));
-          tr2.appendChild(td);
+          trBot.appendChild(td);
         });
 
-        tbody.appendChild(tr1);
-        tbody.appendChild(tr2);
+        tbody.appendChild(trTop);
+        tbody.appendChild(trBot);
       });
 
       table.appendChild(tbody);
@@ -760,16 +773,26 @@
     }
 
     function applyToggles(){
+      // spectrogram show/hide
       document.querySelectorAll("img.spec").forEach(img => {
         img.style.display = toggleSpec.checked ? "" : "none";
       });
+      // spectrogram captions show/hide together (the second capline)
+      document.querySelectorAll(".capline").forEach((el) => {
+        // hide only the "Spectrogram" capline when toggleSpec off
+        if (el.textContent.trim().toLowerCase().startsWith("spectrogram")) {
+          el.style.display = toggleSpec.checked ? "" : "none";
+        }
+      });
 
+      // links show/hide
       const showLinks = toggleLinks.checked;
       document.querySelectorAll(".filelink").forEach(a => {
         a.style.display = showLinks ? "inline-block" : "none";
       });
     }
 
+    // modal close behaviors
     modalClose.addEventListener("click", () => modal.classList.remove("open"));
     modal.addEventListener("click", (e) => {
       if (e.target === modal) modal.classList.remove("open");
@@ -778,6 +801,7 @@
       if (e.key === "Escape") modal.classList.remove("open");
     });
 
+    // Init
     makeNav();
     MODELS.forEach(m => sectionsEl.appendChild(buildModelSection(m)));
 

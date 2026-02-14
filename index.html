@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CMC-ASP — Multimodal Speech Enhancement (Audio + Spectrogram Demos)</title>
 
-  <!-- Optional: nicer font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,8 +12,6 @@
   <style>
     :root{
       --bg: #0b1020;
-      --panel: rgba(255,255,255,0.06);
-      --panel2: rgba(255,255,255,0.09);
       --text: rgba(255,255,255,0.92);
       --muted: rgba(255,255,255,0.66);
       --line: rgba(255,255,255,0.12);
@@ -62,21 +59,10 @@
       align-items: center;
       justify-content: space-between;
     }
-    .brand{
-      display:flex; flex-direction: column; gap: 4px;
-    }
-    .brand .title{
-      font-size: 14px;
-      letter-spacing: 0.2px;
-      font-weight: 700;
-    }
-    .brand .subtitle{
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .navchips{
-      display:flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
-    }
+    .brand{ display:flex; flex-direction: column; gap: 4px; }
+    .brand .title{ font-size: 14px; letter-spacing: 0.2px; font-weight: 700; }
+    .brand .subtitle{ font-size: 12px; color: var(--muted); }
+    .navchips{ display:flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
     .chip{
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.06);
@@ -125,9 +111,7 @@
       align-items: center;
       justify-content: space-between;
     }
-    .badges{
-      display:flex; gap: 8px; flex-wrap: wrap;
-    }
+    .badges{ display:flex; gap: 8px; flex-wrap: wrap; }
     .badge{
       font-size: 12px;
       padding: 7px 10px;
@@ -137,7 +121,7 @@
       color: var(--text);
       display:flex; gap: 8px; align-items: center;
     }
-    .dot{ width:8px; height:8px; border-radius: 50%; background: var(--accent); display:inline-block;}
+    .dot{ width:8px; height:8px; border-radius: 50%; background: var(--accent); display:inline-block; }
     .dot.green{ background: var(--accent2); }
     .dot.warn{ background: var(--warn); }
 
@@ -157,23 +141,14 @@
     .toggle input{ accent-color: var(--accent); }
 
     /* Sections */
-    section{
-      margin-top: 26px;
-      scroll-margin-top: 78px; /* for sticky topbar */
-    }
+    section{ margin-top: 26px; scroll-margin-top: 78px; }
     .section-head{
       display:flex; align-items: flex-end; justify-content: space-between;
       gap: 12px; flex-wrap: wrap;
     }
-    .section-head h2{
-      margin: 0;
-      font-size: 18px;
-      letter-spacing: -0.2px;
-    }
-    .section-head .hint{
-      color: var(--muted);
-      font-size: 12px;
-    }
+    .section-head h2{ margin: 0; font-size: 18px; letter-spacing: -0.2px; }
+    .section-head .hint{ color: var(--muted); font-size: 12px; }
+
     .card{
       margin-top: 12px;
       border: 1px solid var(--line);
@@ -182,9 +157,7 @@
       box-shadow: var(--shadow);
       overflow: hidden;
     }
-    .card-pad{
-      padding: 18px 18px;
-    }
+    .card-pad{ padding: 18px 18px; }
     .card-pad p, .card-pad li{
       margin: 0;
       color: var(--muted);
@@ -192,10 +165,7 @@
       line-height: 1.75;
     }
     .card-pad p + p{ margin-top: 10px; }
-    .card-pad ol{
-      margin: 10px 0 0 18px;
-      padding: 0;
-    }
+    .card-pad ol{ margin: 10px 0 0 18px; padding: 0; }
     .card-pad li{ margin: 8px 0; }
     .card-pad a{
       color: rgba(255,255,255,0.90);
@@ -205,18 +175,15 @@
     .card-pad a:hover{ color: #fff; border-bottom-color: rgba(124,92,255,0.7); }
 
     /* Table */
-    .table-wrap{
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-    }
+    .table-wrap{ overflow: auto; -webkit-overflow-scrolling: touch; }
     table{
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      min-width: 0; /* we use 2-row per sample; avoid forced horizontal scroll */
+      min-width: 0;
     }
 
-    /* ===== header: 2 rows ===== */
+    /* 2 header rows */
     thead tr.cols th{
       position: sticky;
       top: 0;
@@ -232,7 +199,7 @@
     }
     thead tr.cols2 th{
       position: sticky;
-      top: 38px; /* height of first header row */
+      top: 38px;
       z-index: 2;
       background: rgba(15,22,44,0.92);
       backdrop-filter: blur(8px);
@@ -244,7 +211,6 @@
       white-space: nowrap;
     }
 
-    /* Sticky first column header */
     th.sticky{
       position: sticky;
       left: 0;
@@ -262,12 +228,8 @@
       vertical-align: top;
       background: rgba(255,255,255,0.02);
     }
-    /* alternate shading by pair (2 rows per sample) */
-    tbody tr.pair-even td{
-      background: rgba(255,255,255,0.04);
-    }
+    tbody tr.pair-even td{ background: rgba(255,255,255,0.04); }
 
-    /* Sticky first column cells */
     td.sticky{
       position: sticky;
       left: 0;
@@ -277,45 +239,65 @@
       min-width: 150px;
       max-width: 200px;
     }
-    .sample-id{
-      font-weight: 700;
-      font-size: 12px;
-      margin-bottom: 6px;
-      line-height: 1.15;
-    }
-    .sample-sub{
-      font-size: 11px;
-      color: var(--muted);
-      line-height: 1.4;
-    }
+    .sample-id{ font-weight: 700; font-size: 12px; margin-bottom: 6px; line-height: 1.15; }
+    .sample-sub{ font-size: 11px; color: var(--muted); line-height: 1.4; }
 
     /* Cells */
     .cell{
       display:flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       align-items: flex-start;
-      width: 230px;              /* force consistent column width */
+      width: 230px;
       max-width: 230px;
+      padding: 10px;                 /* padding inside cell area */
+      border-radius: 14px;
+      background: rgba(0,0,0,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
     }
+
+    /* NEW: per-item caption above WAV / Spectrogram */
+    .cap{
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.78);
+      letter-spacing: 0.2px;
+      line-height: 1.2;
+      margin-top: 2px;
+    }
+    .cap .tag{
+      display:inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.60);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      padding: 2px 6px;
+      border-radius: 999px;
+      margin-right: 8px;
+    }
+
     audio{
       width: 230px;
       max-width: 100%;
       border-radius: 999px;
       outline: none;
+      margin-top: 2px;
     }
 
-    /* Spectrogram: unify size across all columns */
+    /* Spectrogram: unify size */
     .spec{
       width: 230px;
-      height: 120px;             /* fixed height to unify */
+      height: 120px;
       max-width: 100%;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.14);
       box-shadow: 0 6px 18px rgba(0,0,0,0.30);
       cursor: zoom-in;
       background: rgba(0,0,0,0.18);
-      object-fit: contain;       /* keep the whole spectrogram visible */
+      object-fit: contain;
       display: block;
     }
 
@@ -328,11 +310,11 @@
     }
     .filelink:hover{ color: rgba(255,255,255,0.90); }
 
-    /* Highlight cell wrapper (no padding; preserve same inner size) */
+    /* Highlight (CMC-ASP) */
     .cell.highlight{
-      border-radius: 14px;
-      outline: 1px solid rgba(124,92,255,0.55);
-      background: rgba(124,92,255,0.06);
+      border: 1px solid rgba(124,92,255,0.55);
+      background: rgba(124,92,255,0.08);
+      box-shadow: 0 10px 26px rgba(124,92,255,0.12);
     }
 
     /* Modal */
@@ -379,10 +361,7 @@
       user-select:none;
     }
     .modal-close:hover{ transform: translateY(-1px); border-color: rgba(124,92,255,0.55); }
-    .modal-img-wrap{
-      padding: 16px;
-      overflow:auto;
-    }
+    .modal-img-wrap{ padding: 16px; overflow:auto; }
     .modal-img{
       width: 100%;
       height: auto;
@@ -390,7 +369,6 @@
       border: 1px solid rgba(255,255,255,0.14);
     }
 
-    /* Footer */
     footer{
       margin-top: 34px;
       color: var(--muted);
@@ -492,7 +470,6 @@
       </div>
     </section>
 
-    <!-- Comparison Table note -->
     <section id="comparison">
       <div class="section-head">
         <div>
@@ -515,9 +492,8 @@
     <footer>
       <div>
         <b>Notes</b><br/>
-        • “Noisy ACM” plays <code>*_noisy.wav</code> and shows <code>*_noisy.PNG</code> (fallback: <code>*_noisy.PNG</code>).<br/>
-        • Clean spectrograms may not exist in your PNG folders; if missing, Clean image will be hidden.<br/>
-        • GitHub Pages is case-sensitive: keep <code>.PNG</code> exactly as uploaded.
+        • GitHub Pages is case-sensitive: keep <code>.PNG</code> exactly as uploaded.<br/>
+        • Each cell now shows captions above WAV and Spectrogram for readability.
       </div>
     </footer>
   </div>
@@ -536,28 +512,20 @@
   </div>
 
   <script>
-    /**
-     * Put this index.html at repository root:
-     *   - BASE should stay "" (empty)
-     * If you put index.html inside /WAV, set:
-     *   - const BASE = "..";
-     */
     const BASE = ""; // "" when index.html is at repo root
 
-    // Folder mapping (matches your uploaded structure)
     const MODELS = [
       { key: "DCCRN",  title: "Attention-based Early Fusion DCCRN", ref: "[5]",  wavDir: "WAV/DCCRN_wav",  specDir: "WAV/DCCRN_spectrogram" },
       { key: "MMINet", title: "MMINet",                               ref: "[6]",  wavDir: "WAV/MMINet_wav", specDir: "WAV/MMINet_spectrogram" },
       { key: "LAU-Net",title: "LAU-Net",                              ref: "[7]",  wavDir: "WAV/LAU-Net_wav",specDir: "WAV/LAU-Net_spectrogram" },
     ];
 
-    // Samples (display name changed; file id stays the same)
     const SAMPLES = [
       { id: "p00_u32", label: "Sample A", display: "Male" },
       { id: "p24_u25", label: "Sample B", display: "Female" },
     ];
 
-    // IMPORTANT: Do not change any wav/png filenames here (as requested)
+    // DO NOT change wav/png filenames here (as you requested)
     const COLS_TOP = [
       { name: "Noisy ACM",          wavSuffix: "_noisy.wav",  specSuffix: "_noisy.PNG",    specFallback: "_noisy.PNG" },
       { name: "BCM",               wavSuffix: "_bcm.wav",    specSuffix: "_bcm.PNG" },
@@ -577,7 +545,6 @@
     const toggleSpec = document.getElementById("toggleSpec");
     const toggleLinks = document.getElementById("toggleLinks");
 
-    // Modal
     const modal = document.getElementById("modal");
     const modalImg = document.getElementById("modalImg");
     const modalCaption = document.getElementById("modalCaption");
@@ -611,18 +578,29 @@
       });
     }
 
+    function makeCap(tagText, nameText){
+      const cap = document.createElement("div");
+      cap.className = "cap";
+      cap.innerHTML = `<span class="tag">${tagText}</span>${nameText}`;
+      return cap;
+    }
+
     function createCell(model, sampleId, col){
       const cell = document.createElement("div");
       cell.className = "cell" + (col.highlight ? " highlight" : "");
 
       const wavPath = joinPath(model.wavDir, `${sampleId}${col.wavSuffix}`);
+
+      // NEW: caption above WAV
+      cell.appendChild(makeCap("WAV", col.name));
+
       const audio = document.createElement("audio");
       audio.controls = true;
       audio.preload = "none";
       audio.src = wavPath;
       cell.appendChild(audio);
 
-      // Optional links (hidden by default)
+      // Optional link
       const link = document.createElement("a");
       link.className = "filelink filelink-wav";
       link.href = wavPath;
@@ -634,15 +612,17 @@
 
       // Spectrogram
       if (col.specSuffix){
+        const primary = joinPath(model.specDir, `${sampleId}${col.specSuffix}`);
+
+        // NEW: caption above Spectrogram
+        cell.appendChild(makeCap("Spectrogram", col.name));
+
         const img = document.createElement("img");
         img.className = "spec";
         img.loading = "lazy";
         img.alt = `${model.key} ${sampleId} ${col.name} spectrogram`;
-
-        const primary = joinPath(model.specDir, `${sampleId}${col.specSuffix}`);
         img.src = primary;
 
-        // fallback if provided
         if (col.specFallback){
           const fallback = joinPath(model.specDir, `${sampleId}${col.specFallback}`);
           img.onerror = () => {
@@ -706,10 +686,8 @@
 
       const table = document.createElement("table");
 
-      // header (2 header rows)
       const thead = document.createElement("thead");
 
-      // row 1 header (top columns)
       const trH1 = document.createElement("tr");
       trH1.className = "cols";
 
@@ -725,10 +703,8 @@
         trH1.appendChild(th);
       });
 
-      // row 2 header (bottom columns)
       const trH2 = document.createElement("tr");
       trH2.className = "cols2";
-
       COLS_BOTTOM.forEach(c => {
         const th = document.createElement("th");
         th.textContent = c.name;
@@ -739,20 +715,17 @@
       thead.appendChild(trH2);
       table.appendChild(thead);
 
-      // body: each sample uses 2 rows (top/bottom)
       const tbody = document.createElement("tbody");
 
       SAMPLES.forEach((s, idx) => {
-        const pairEven = (idx % 2 === 1); // alternate shading per sample-pair
-        // row 1 (top)
+        const pairEven = (idx % 2 === 1);
+
         const tr1 = document.createElement("tr");
         if (pairEven) tr1.classList.add("pair-even");
 
         const td0 = document.createElement("td");
         td0.className = "sticky";
         td0.rowSpan = 2;
-
-        // keep "Sample A" and "Male" as you want (two lines in the left cell)
         td0.innerHTML = `
           <div class="sample-id">${s.label}</div>
           <div class="sample-sub">${s.display}</div>
@@ -765,7 +738,6 @@
           tr1.appendChild(td);
         });
 
-        // row 2 (bottom)
         const tr2 = document.createElement("tr");
         if (pairEven) tr2.classList.add("pair-even");
 
@@ -788,19 +760,16 @@
     }
 
     function applyToggles(){
-      // spectrogram show/hide
       document.querySelectorAll("img.spec").forEach(img => {
         img.style.display = toggleSpec.checked ? "" : "none";
       });
 
-      // links show/hide
       const showLinks = toggleLinks.checked;
       document.querySelectorAll(".filelink").forEach(a => {
         a.style.display = showLinks ? "inline-block" : "none";
       });
     }
 
-    // modal close behaviors
     modalClose.addEventListener("click", () => modal.classList.remove("open"));
     modal.addEventListener("click", (e) => {
       if (e.target === modal) modal.classList.remove("open");
@@ -809,7 +778,6 @@
       if (e.key === "Escape") modal.classList.remove("open");
     });
 
-    // Init
     makeNav();
     MODELS.forEach(m => sectionsEl.appendChild(buildModelSection(m)));
 

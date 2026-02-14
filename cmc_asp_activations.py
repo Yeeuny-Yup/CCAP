@@ -1,4 +1,3 @@
-# cmc_asp_activations.py
 """
 CMC-ASP: Hook-based activation statistics collection.
 

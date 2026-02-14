@@ -185,11 +185,6 @@
     .card-pad{
       padding: 18px 18px;
     }
-    .card-pad h3{
-      margin: 0 0 10px;
-      font-size: 14px;
-      color: rgba(255,255,255,0.90);
-    }
     .card-pad p, .card-pad li{
       margin: 0;
       color: var(--muted);
@@ -218,11 +213,26 @@
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      min-width: 1200px;
+      min-width: 0; /* we use 2-row per sample; avoid forced horizontal scroll */
     }
-    thead th{
+
+    /* ===== header: 2 rows ===== */
+    thead tr.cols th{
       position: sticky;
       top: 0;
+      z-index: 3;
+      background: rgba(15,22,44,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: left;
+      padding: 12px 12px;
+      white-space: nowrap;
+    }
+    thead tr.cols2 th{
+      position: sticky;
+      top: 38px; /* height of first header row */
       z-index: 2;
       background: rgba(15,22,44,0.92);
       backdrop-filter: blur(8px);
@@ -233,61 +243,45 @@
       padding: 12px 12px;
       white-space: nowrap;
     }
-    thead tr.group th{
+
+    /* Sticky first column header */
+    th.sticky{
       position: sticky;
-      top: 0;
-      z-index: 3;
-      text-align: center;
-      font-size: 11px;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.60);
-      background: rgba(12,18,38,0.96);
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-    }
-    
-    /* second header row sticks under the group row */
-    thead tr.cols th{
-      position: sticky;
-      top: 38px;            /* group row height에 맞춰줌 (필요하면 36~44 사이로 조절) */
-      z-index: 2;
-      background: rgba(15,22,44,0.92);
-    }
-    
-    /* the sticky first header cell spans two rows */
-    thead tr.group th.sticky{
-      top: 0;
+      left: 0;
       z-index: 4;
-      text-align: left;
+      background: rgba(15,22,44,0.96);
+      border-right: 1px solid rgba(255,255,255,0.10);
+      min-width: 150px;
+      max-width: 200px;
+      white-space: nowrap;
     }
+
     tbody td{
       border-bottom: 1px solid rgba(255,255,255,0.07);
       padding: 12px 12px;
       vertical-align: top;
       background: rgba(255,255,255,0.02);
     }
-    tbody tr:nth-child(2n) td{
+    /* alternate shading by pair (2 rows per sample) */
+    tbody tr.pair-even td{
       background: rgba(255,255,255,0.04);
     }
 
-    /* Sticky first column */
-    th.sticky, td.sticky{
+    /* Sticky first column cells */
+    td.sticky{
       position: sticky;
       left: 0;
-      z-index: 3;
-      background: rgba(15,22,44,0.96);
+      z-index: 1;
+      background: rgba(18,26,52,0.96);
       border-right: 1px solid rgba(255,255,255,0.10);
       min-width: 150px;
       max-width: 200px;
-    }
-    tbody td.sticky{
-      background: rgba(18,26,52,0.96);
-      z-index: 1;
     }
     .sample-id{
       font-weight: 700;
       font-size: 12px;
       margin-bottom: 6px;
+      line-height: 1.15;
     }
     .sample-sub{
       font-size: 11px;
@@ -301,6 +295,8 @@
       flex-direction: column;
       gap: 10px;
       align-items: flex-start;
+      width: 230px;              /* force consistent column width */
+      max-width: 230px;
     }
     audio{
       width: 230px;
@@ -312,14 +308,14 @@
     /* Spectrogram: unify size across all columns */
     .spec{
       width: 230px;
-      height: 120px;          /* fixed height: prevents "Noisy" from looking larger */
+      height: 120px;             /* fixed height to unify */
       max-width: 100%;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.14);
       box-shadow: 0 6px 18px rgba(0,0,0,0.30);
       cursor: zoom-in;
       background: rgba(0,0,0,0.18);
-      object-fit: contain;    /* keep entire spectrogram visible */
+      object-fit: contain;       /* keep the whole spectrogram visible */
       display: block;
     }
 
@@ -331,6 +327,13 @@
       padding-bottom: 1px;
     }
     .filelink:hover{ color: rgba(255,255,255,0.90); }
+
+    /* Highlight cell wrapper (no padding; preserve same inner size) */
+    .cell.highlight{
+      border-radius: 14px;
+      outline: 1px solid rgba(124,92,255,0.55);
+      background: rgba(124,92,255,0.06);
+    }
 
     /* Modal */
     .modal{
@@ -512,8 +515,8 @@
     <footer>
       <div>
         <b>Notes</b><br/>
-        • “Noisy ACM” plays <code>*_noisy.wav</code> and shows <code>*_acm.PNG</code> (fallback: <code>*_noisy.PNG</code>).<br/>
-        • Clean spectrograms were not found in your PNG folders; only the clean audio is shown.<br/>
+        • “Noisy ACM” plays <code>*_noisy.wav</code> and shows <code>*_noisy.PNG</code> (fallback: <code>*_noisy.PNG</code>).<br/>
+        • Clean spectrograms may not exist in your PNG folders; if missing, Clean image will be hidden.<br/>
         • GitHub Pages is case-sensitive: keep <code>.PNG</code> exactly as uploaded.
       </div>
     </footer>
@@ -548,24 +551,25 @@
       { key: "LAU-Net",title: "LAU-Net",                              ref: "[7]",  wavDir: "WAV/LAU-Net_wav",specDir: "WAV/LAU-Net_spectrogram" },
     ];
 
-    // Samples (display name changed, but file id stays the same)
+    // Samples (display name changed; file id stays the same)
     const SAMPLES = [
       { id: "p00_u32", label: "Sample A", display: "Male" },
       { id: "p24_u25", label: "Sample B", display: "Female" },
     ];
 
-    // Column order (requested)
-    const COLS = [
+    // IMPORTANT: Do not change any wav/png filenames here (as requested)
+    const COLS_TOP = [
       { name: "Noisy ACM",          wavSuffix: "_noisy.wav",  specSuffix: "_noisy.PNG",    specFallback: "_noisy.PNG" },
       { name: "BCM",               wavSuffix: "_bcm.wav",    specSuffix: "_bcm.PNG" },
-      { name: "Clean ACM (Label)", wavSuffix: "_clean.wav",  specSuffix:  "_acm.PNG"},
-
+      { name: "Clean ACM (Label)", wavSuffix: "_clean.wav",  specSuffix: "_acm.PNG",    specFallback: "_noisy.PNG" },
       { name: "CMC-ASP",           wavSuffix: "_CMCASP.wav", specSuffix: "_cmcasp.PNG", highlight: true },
+    ];
 
-      { name: "PP [1]",            wavSuffix: "_PP.wav",     specSuffix: "_pp.PNG" },
-      { name: "TP [2]",            wavSuffix: "_TP.wav",     specSuffix: "_tp.PNG" },
-      { name: "BN [3]",            wavSuffix: "_BN.wav",     specSuffix: "_bn.PNG" },
-      { name: "MANU [4]",          wavSuffix: "_MANU.wav",   specSuffix: "_manu.PNG" },
+    const COLS_BOTTOM = [
+      { name: "PP [1]",   wavSuffix: "_PP.wav",   specSuffix: "_pp.PNG" },
+      { name: "TP [2]",   wavSuffix: "_TP.wav",   specSuffix: "_tp.PNG" },
+      { name: "BN [3]",   wavSuffix: "_BN.wav",   specSuffix: "_bn.PNG" },
+      { name: "MANU [4]", wavSuffix: "_MANU.wav", specSuffix: "_manu.PNG" },
     ];
 
     const sectionsEl = document.getElementById("sections");
@@ -609,7 +613,7 @@
 
     function createCell(model, sampleId, col){
       const cell = document.createElement("div");
-      cell.className = "cell";
+      cell.className = "cell" + (col.highlight ? " highlight" : "");
 
       const wavPath = joinPath(model.wavDir, `${sampleId}${col.wavSuffix}`);
       const audio = document.createElement("audio");
@@ -676,14 +680,6 @@
         cell.appendChild(note);
       }
 
-      // Highlight CMC-ASP column
-      if (col.highlight){
-        cell.style.padding = "10px";
-        cell.style.borderRadius = "14px";
-        cell.style.border = "1px solid rgba(124,92,255,0.55)";
-        cell.style.background = "rgba(124,92,255,0.08)";
-      }
-
       return cell;
     }
 
@@ -698,7 +694,7 @@
           <h2>${model.title} <span style="color:rgba(255,255,255,0.75)">${model.ref}</span></h2>
           <div class="hint">Folder: <code>${model.wavDir}</code> &nbsp; | &nbsp; <code>${model.specDir}</code></div>
         </div>
-        <div class="hint">Scroll horizontally if the table is wide.</div>
+        <div class="hint">Each sample is displayed in 2 rows (Top: Inputs/Label/Ours, Bottom: Baselines).</div>
       `;
       section.appendChild(head);
 
@@ -710,74 +706,77 @@
 
       const table = document.createElement("table");
 
-      // header (2-row grouped header)
+      // header (2 header rows)
       const thead = document.createElement("thead");
-      
-      // 1st row: group headers
-      const trGroup = document.createElement("tr");
-      trGroup.className = "group";
-      
-      // left sticky header (rowspan=2)
-      const thSticky = document.createElement("th");
-      thSticky.className = "sticky";
-      thSticky.rowSpan = 2;
-      thSticky.textContent = "Utterance";
-      trGroup.appendChild(thSticky);
-      
-      // group spans (현재 컬럼 순서 기준)
-      // Inputs: Noisy ACM, BCM (2)
-      // Label: Clean (1)
-      // Ours: CMC-ASP (1)
-      // Baselines: PP, TP, BN, MANU (4)
-      const groups = [
-        { name: "Inputs", span: 2 },
-        { name: "Label", span: 1 },
-        { name: "Ours", span: 1 },
-        { name: "Baselines", span: COLS.length - 4 }, // = 4
-      ];
-      
-      groups.forEach(g => {
-        const th = document.createElement("th");
-        th.colSpan = g.span;
-        th.textContent = g.name;
-        trGroup.appendChild(th);
-      });
-      
-      // 2nd row: column headers
-      const trCols = document.createElement("tr");
-      trCols.className = "cols";
-      
-      COLS.forEach(c => {
+
+      // row 1 header (top columns)
+      const trH1 = document.createElement("tr");
+      trH1.className = "cols";
+
+      const th0 = document.createElement("th");
+      th0.className = "sticky";
+      th0.rowSpan = 2;
+      th0.textContent = "Utterance";
+      trH1.appendChild(th0);
+
+      COLS_TOP.forEach(c => {
         const th = document.createElement("th");
         th.textContent = c.name;
-        trCols.appendChild(th);
+        trH1.appendChild(th);
       });
-      
-      thead.appendChild(trGroup);
-      thead.appendChild(trCols);
+
+      // row 2 header (bottom columns)
+      const trH2 = document.createElement("tr");
+      trH2.className = "cols2";
+
+      COLS_BOTTOM.forEach(c => {
+        const th = document.createElement("th");
+        th.textContent = c.name;
+        trH2.appendChild(th);
+      });
+
+      thead.appendChild(trH1);
+      thead.appendChild(trH2);
       table.appendChild(thead);
 
-      // body
+      // body: each sample uses 2 rows (top/bottom)
       const tbody = document.createElement("tbody");
 
-      SAMPLES.forEach(s => {
-        const tr = document.createElement("tr");
+      SAMPLES.forEach((s, idx) => {
+        const pairEven = (idx % 2 === 1); // alternate shading per sample-pair
+        // row 1 (top)
+        const tr1 = document.createElement("tr");
+        if (pairEven) tr1.classList.add("pair-even");
 
         const td0 = document.createElement("td");
         td0.className = "sticky";
+        td0.rowSpan = 2;
+
+        // keep "Sample A" and "Male" as you want (two lines in the left cell)
         td0.innerHTML = `
           <div class="sample-id">${s.label}</div>
           <div class="sample-sub">${s.display}</div>
         `;
-        tr.appendChild(td0);
+        tr1.appendChild(td0);
 
-        COLS.forEach(c => {
+        COLS_TOP.forEach(c => {
           const td = document.createElement("td");
           td.appendChild(createCell(model, s.id, c));
-          tr.appendChild(td);
+          tr1.appendChild(td);
         });
 
-        tbody.appendChild(tr);
+        // row 2 (bottom)
+        const tr2 = document.createElement("tr");
+        if (pairEven) tr2.classList.add("pair-even");
+
+        COLS_BOTTOM.forEach(c => {
+          const td = document.createElement("td");
+          td.appendChild(createCell(model, s.id, c));
+          tr2.appendChild(td);
+        });
+
+        tbody.appendChild(tr1);
+        tbody.appendChild(tr2);
       });
 
       table.appendChild(tbody);

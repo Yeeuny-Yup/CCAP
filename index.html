@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CMC-ASP Audio Demo (80% Pruning)</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; margin: 32px; line-height: 1.45; color: #111; }
+    .wrap { max-width: 1400px; margin: 0 auto; }
+    h1 { margin: 0 0 6px; }
+    .subtitle { margin: 0 0 18px; color: #444; }
+    .note { background: #f6f8fa; border: 1px solid #e5e7eb; padding: 12px 14px; border-radius: 10px; margin: 16px 0 24px; }
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 28px 0; }
+
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th, td { border: 1px solid #e5e7eb; padding: 10px; vertical-align: top; }
+    th { background: #fafafa; font-weight: 600; }
+    .col-sample { width: 110px; }
+    audio { width: 100%; }
+    img.spec { width: 100%; height: auto; border-radius: 8px; border: 1px solid #eee; margin-top: 8px; }
+    .small { font-size: 0.92rem; color: #555; }
+    .model-title { margin-top: 28px; }
+    .sticky-head thead th { position: sticky; top: 0; z-index: 2; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>CMC-ASP Audio Demo</h1>
+  <p class="subtitle"><b>80% structured pruning</b> results on multimodal (ACM + BCM) speech enhancement.</p>
+
+  <div class="note">
+    <b>Contents</b><br/>
+    For each model family (MMINet / LAU-Net / Attention-based LAU-Net), we provide paired examples (female/male) including
+    inputs (Noisy, ACM, BCM) and enhanced outputs from pruning baselines (CMC-ASP, PP, TP, BN, MANU).
+  </div>
+
+  <p class="small">
+    Spectrograms: y-axis 0–4 kHz, x-axis time (s), log-scaled magnitude.
+  </p>
+
+  <hr/>
+
+  <!-- =========================================================
+       Helper note about paths
+       audio: assets/audio/<MODEL_DIR>/<FILE>.mp3
+       img  : assets/img/<MODEL_DIR>/<FILE>.png
+       ========================================================= -->
+
+  <!-- =========================
+       SECTION: MMINet (80% pruned)
+       ========================= -->
+  <h2 class="model-title">MMINet (80% pruned)</h2>
+  <table class="sticky-head">
+    <thead>
+      <tr>
+        <th class="col-sample">Sample</th>
+        <th>Noisy</th>
+        <th>ACM</th>
+        <th>BCM</th>
+        <th>CMC-ASP</th>
+        <th>PP</th>
+        <th>TP</th>
+        <th>BN</th>
+        <th>MANU</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- ===== Example: S01 female ===== -->
+      <tr>
+        <td><b>S01 (F)</b></td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_noisy.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_female_noisy.png" alt="s01 female noisy">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_acm.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_female_acm.png" alt="s01 female acm">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_bcm.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_female_bcm.png" alt="s01 female bcm">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_CMCASP.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_female_CMCASP.png" alt="s01 female cmcasp">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_PP.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_female_PP.png" alt="s01 female pp">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_TP.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_female_TP.png" alt="s01 female tp">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_BN.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_female_BN.png" alt="s01 female bn">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_MANU.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_female_MANU.png" alt="s01 female manu">
+        </td>
+      </tr>
+
+      <!-- ===== Example: S01 male ===== -->
+      <tr>
+        <td><b>S01 (M)</b></td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_noisy.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_male_noisy.png" alt="s01 male noisy">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_acm.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_male_acm.png" alt="s01 male acm">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_bcm.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_male_bcm.png" alt="s01 male bcm">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_CMCASP.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_male_CMCASP.png" alt="s01 male cmcasp">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_PP.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_male_PP.png" alt="s01 male pp">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_TP.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_male_TP.png" alt="s01 male tp">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_BN.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_male_BN.png" alt="s01 male bn">
+        </td>
+
+        <td>
+          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_MANU.mp3" type="audio/mpeg"></audio>
+          <img class="spec" src="assets/img/mminet_pr80/s01_male_MANU.png" alt="s01 male manu">
+        </td>
+      </tr>
+
+      <!-- Copy additional rows (S02, S03, ...) by duplicating blocks above -->
+    </tbody>
+  </table>
+
+  <hr/>
+
+  <!-- =========================
+       SECTION: LAU-Net (80% pruned)
+       ========================= -->
+  <h2 class="model-title">LAU-Net (80% pruned)</h2>
+  <p class="small">Same table layout; paths use <code>assets/audio/launet_pr80/</code> and <code>assets/img/launet_pr80/</code>.</p>
+  <!-- Duplicate the table above and replace mminet_pr80 -> launet_pr80 -->
+
+  <hr/>
+
+  <!-- =========================
+       SECTION: Attention-based Early Fusion DCCRN (80% pruned)
+       ========================= -->
+  <h2 class="model-title">Attention-based LAU-Net (80% pruned)</h2>
+  <p class="small">Same table layout; paths use <code>assets/audio/attn_launet_pr80/</code> and <code>assets/img/attn_launet_pr80/</code>.</p>
+  <!-- Duplicate the table above and replace mminet_pr80 -> attn_launet_pr80 -->
+
+  <hr/>
+
+  <h2>Implementation Notes (Paper-faithful details)</h2>
+  <ul class="small">
+    <li><b>Exact statistic used:</b> for each sample <i>x</i>, we compute channel-wise <code>||O_{F,C}(x)||_1</code> by summing absolute activations over all non-channel dimensions, then estimate <code>E[||O_{F,C}(x)||_1]</code> over the calibration set.</li>
+    <li><b>Unbiased expectation over samples:</b> accumulation is performed by summing <code>||O_{F,C}(x)||_1</code> over <b>all samples</b> and dividing by the <b>total number of samples</b>, which remains correct even if the last batch size differs.</li>
+    <li><b>Zero-masking location:</b> modality-wise zero-masking is applied <b>at the input</b> (Noisy-only / BCM-only), matching the method definition.</li>
+    <li><b>Numerical stability:</b> <code>&epsilon;</code> is used only to avoid division-by-zero when the multimodal reference response is very small; it does not change the intended scoring behavior.</li>
+  </ul>
+
+</div>
+</body>
+</html>

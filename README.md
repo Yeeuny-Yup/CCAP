@@ -68,6 +68,6 @@ A high $IS_{F,C}$ indicates that a channel responds **consistently** under both 
 
 - **Zero-masking location:** modality-wise zero-masking is applied **at the input** (Noisy-only / BCM-only), matching the paper definition.
 
-- **Numerical stability:** $\epsilon$ is included only to avoid division-by-zero when $\mathbb{E}[\|O^{\mathrm{Multi}}_{F,C}(x)\|_1]$ is very small; it does not change the intended scoring behavior.
+- **Numerical stability:** $\epsilon$ is included only to avoid division-by-zero when $E[|O^{Multi}_{F,C}(x)|_1]$ is very small; it does not change the intended scoring behavior.
 
 ---

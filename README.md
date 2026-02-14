@@ -16,50 +16,38 @@ Specifically, it implements:
 </p>
 
 ---
+## Method Overview (CMC-ASP Scoring)
 
-Given a paired multimodal input
-$$
-\mathbf{x} = [x_{\mathrm{Noisy}}, x_{\mathrm{BCM}}],
-$$
+Given a paired multimodal input:
+
+<img src="https://render.githubusercontent.com/render/math?math=%5Cmathbf%7Bx%7D%20%3D%20%5Bx_%7B%5Cmathrm%7BNoisy%7D%7D%2C%20x_%7B%5Cmathrm%7BBCM%7D%7D%5D" />
+
 CMC-ASP evaluates three input conditions:
 
-1. **Multimodal reference**:
-$$
-\mathbf{x}^{\mathrm{Multi}} = [x_{\mathrm{Noisy}}, x_{\mathrm{BCM}}]
-$$
+**(1) Multimodal reference**
 
-2. **Noisy-only (BCM masked)**:
-$$
-\mathbf{x}^{\mathrm{Noisy}} = [x_{\mathrm{Noisy}}, 0]
-$$
+<img src="https://render.githubusercontent.com/render/math?math=%5Cmathbf%7Bx%7D%5E%7B%5Cmathrm%7BMulti%7D%7D%20%3D%20%5Bx_%7B%5Cmathrm%7BNoisy%7D%7D%2C%20x_%7B%5Cmathrm%7BBCM%7D%7D%5D" />
 
-3. **BCM-only (Noisy masked)**:
-$$
-\mathbf{x}^{\mathrm{BCM}} = [0, x_{\mathrm{BCM}}]
-$$
+**(2) Noisy-only (BCM masked)**
 
-For a target layer (or filter) $F$ and output channel $C$, let $O_{F,C}(\cdot)$ be the channel activation.
-CMC-ASP summarizes activation magnitude using the L1 norm and computes dataset-level expectations over a calibration set $D_{\mathrm{cal}}$.
+<img src="https://render.githubusercontent.com/render/math?math=%5Cmathbf%7Bx%7D%5E%7B%5Cmathrm%7BNoisy%7D%7D%20%3D%20%5Bx_%7B%5Cmathrm%7BNoisy%7D%7D%2C%200%5D" />
 
-**Normalized sensitivities**:
-$$
-S^{\mathrm{Noisy}}_{F,C} =
-\frac{\mathbb{E}_{x \sim D_{\mathrm{cal}}}\big[\| O^{\mathrm{Noisy}}_{F,C}(x)\|_1\big]}
-{\mathbb{E}_{x \sim D_{\mathrm{cal}}}\big[\| O^{\mathrm{Multi}}_{F,C}(x)\|_1\big] + \epsilon}
-$$
+**(3) BCM-only (Noisy masked)**
 
-$$
-S^{\mathrm{BCM}}_{F,C} =
-\frac{\mathbb{E}_{x \sim D_{\mathrm{cal}}}\big[\| O^{\mathrm{BCM}}_{F,C}(x)\|_1\big]}
-{\mathbb{E}_{x \sim D_{\mathrm{cal}}}\big[\| O^{\mathrm{Multi}}_{F,C}(x)\|_1\big] + \epsilon}
-$$
+<img src="https://render.githubusercontent.com/render/math?math=%5Cmathbf%7Bx%7D%5E%7B%5Cmathrm%7BBCM%7D%7D%20%3D%20%5B0%2C%20x_%7B%5Cmathrm%7BBCM%7D%7D%5D" />
 
-**Final importance score (symmetric aggregation)**:
-$$
-IS_{F,C} = 0.5 \cdot S^{\mathrm{Noisy}}_{F,C} + 0.5 \cdot S^{\mathrm{BCM}}_{F,C}.
-$$
+For a target layer (or filter) $F$ and output channel $C$, let $O_%7BF%2CC%7D(%5Ccdot)$ be the channel activation.
+CMC-ASP summarizes activation magnitude using the L1 norm and computes dataset-level expectations over a calibration set $D_%7B%5Cmathrm%7Bcal%7D%7D$.
 
-A high \(IS_{F,C}\) indicates that a channel responds **consistently** under both zero-masked conditions relative to the multimodal reference, suggesting **modality-shared / fusion-relevant** behavior.
+**Normalized sensitivities**
+
+<img src="https://render.githubusercontent.com/render/math?math=S_%7BF%2CC%7D%5E%7B%5Cmathrm%7BNoisy%7D%7D%20%3D%20%5Cfrac%7B%5Cmathbb%7BE%7D_%7Bx%20%5Csim%20D_%7B%5Cmathrm%7Bcal%7D%7D%7D%5B%5C%7Cl%20O_%7BF%2CC%7D%5E%7B%5Cmathrm%7BNoisy%7D%7D(x)%20%5C%7Cr%7C_1%5D%7D%7B%5Cmathbb%7BE%7D_%7Bx%20%5Csim%20D_%7B%5Cmathrm%7Bcal%7D%7D%7D%5B%5C%7Cl%20O_%7BF%2CC%7D%5E%7B%5Cmathrm%7BMulti%7D%7D(x)%20%5C%7Cr%7C_1%5D%20%2B%20%5Cepsilon%7D" />
+
+<img src="https://render.githubusercontent.com/render/math?math=S_%7BF%2CC%7D%5E%7B%5Cmathrm%7BBCM%7D%7D%20%3D%20%5Cfrac%7B%5Cmathbb%7BE%7D_%7Bx%20%5Csim%20D_%7B%5Cmathrm%7Bcal%7D%7D%7D%5B%5C%7Cl%20O_%7BF%2CC%7D%5E%7B%5Cmathrm%7BBCM%7D%7D(x)%20%5C%7Cr%7C_1%5D%7D%7B%5Cmathbb%7BE%7D_%7Bx%20%5Csim%20D_%7B%5Cmathrm%7Bcal%7D%7D%7D%5B%5C%7Cl%20O_%7BF%2CC%7D%5E%7B%5Cmathrm%7BMulti%7D%7D(x)%20%5C%7Cr%7C_1%5D%20%2B%20%5Cepsilon%7D" />
+
+**Final importance score (symmetric aggregation)**
+
+<img src="https://render.githubusercontent.com/render/math?math=IS_%7BF%2CC%7D%20%3D%200.5%20%5Ccdot%20S_%7BF%2CC%7D%5E%7B%5Cmathrm%7BNoisy%7D%7D%20%2B%200.5%20%5Ccdot%20S_%7BF%2CC%7D%5E%7B%5Cmathrm%7BBCM%7D%7D" />
 
 ---
 

@@ -3,190 +3,658 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CMC-ASP Audio Demo (80% Pruning)</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; margin: 32px; line-height: 1.45; color: #111; }
-    .wrap { max-width: 1400px; margin: 0 auto; }
-    h1 { margin: 0 0 6px; }
-    .subtitle { margin: 0 0 18px; color: #444; }
-    .note { background: #f6f8fa; border: 1px solid #e5e7eb; padding: 12px 14px; border-radius: 10px; margin: 16px 0 24px; }
-    hr { border: none; border-top: 1px solid #e5e7eb; margin: 28px 0; }
+  <title>CMC-ASP — Multimodal Speech Enhancement (Audio + Spectrogram Demos)</title>
 
-    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    th, td { border: 1px solid #e5e7eb; padding: 10px; vertical-align: top; }
-    th { background: #fafafa; font-weight: 600; }
-    .col-sample { width: 110px; }
-    audio { width: 100%; }
-    img.spec { width: 100%; height: auto; border-radius: 8px; border: 1px solid #eee; margin-top: 8px; }
-    .small { font-size: 0.92rem; color: #555; }
-    .model-title { margin-top: 28px; }
-    .sticky-head thead th { position: sticky; top: 0; z-index: 2; }
+  <!-- Optional: nicer font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b1020;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.09);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.66);
+      --line: rgba(255,255,255,0.12);
+      --accent: #7c5cff;
+      --accent2:#19c37d;
+      --warn:#ffcc66;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 18px;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 10% 0%, rgba(124,92,255,0.30), transparent 60%),
+        radial-gradient(900px 700px at 100% 20%, rgba(25,195,125,0.16), transparent 55%),
+        radial-gradient(700px 600px at 60% 110%, rgba(255,204,102,0.14), transparent 55%),
+        var(--bg);
+    }
+
+    a{ color: inherit; }
+    .container{
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 28px 20px 80px;
+    }
+
+    /* Top bar */
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(to bottom, rgba(11,16,32,0.88), rgba(11,16,32,0.55));
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner{
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand{
+      display:flex; flex-direction: column; gap: 4px;
+    }
+    .brand .title{
+      font-size: 14px;
+      letter-spacing: 0.2px;
+      font-weight: 700;
+    }
+    .brand .subtitle{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .navchips{
+      display:flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
+    }
+    .chip{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      text-decoration: none;
+      transition: 0.15s ease;
+      user-select: none;
+    }
+    .chip:hover{
+      transform: translateY(-1px);
+      border-color: rgba(124,92,255,0.55);
+      background: rgba(124,92,255,0.14);
+    }
+
+    /* Hero */
+    .hero{
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 22px 18px;
+    }
+    .hero h1{
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+    }
+    .hero p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      max-width: 980px;
+    }
+    .meta-row{
+      margin-top: 14px;
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .badges{
+      display:flex; gap: 8px; flex-wrap: wrap;
+    }
+    .badge{
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      display:flex; gap: 8px; align-items: center;
+    }
+    .dot{ width:8px; height:8px; border-radius: 50%; background: var(--accent); display:inline-block;}
+    .dot.green{ background: var(--accent2); }
+    .dot.warn{ background: var(--warn); }
+
+    .toggles{
+      display:flex; gap: 10px; flex-wrap: wrap; align-items:center; justify-content:flex-end;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .toggle{
+      display:flex; gap: 8px; align-items:center;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      padding: 8px 10px;
+      border-radius: 999px;
+      user-select:none;
+    }
+    .toggle input{ accent-color: var(--accent); }
+
+    /* Sections */
+    section{
+      margin-top: 26px;
+    }
+    .section-head{
+      display:flex; align-items: flex-end; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .section-head h2{
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.2px;
+    }
+    .section-head .hint{
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .card{
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    /* Table */
+    .table-wrap{
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table{
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 1200px;
+    }
+    thead th{
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: rgba(15,22,44,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: left;
+      padding: 12px 12px;
+      white-space: nowrap;
+    }
+    tbody td{
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 12px 12px;
+      vertical-align: top;
+      background: rgba(255,255,255,0.02);
+    }
+    tbody tr:nth-child(2n) td{
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* Sticky first column */
+    th.sticky, td.sticky{
+      position: sticky;
+      left: 0;
+      z-index: 3;
+      background: rgba(15,22,44,0.96);
+      border-right: 1px solid rgba(255,255,255,0.10);
+      min-width: 130px;
+      max-width: 180px;
+    }
+    tbody td.sticky{
+      background: rgba(18,26,52,0.96);
+      z-index: 1;
+    }
+    .sample-id{
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .sample-sub{
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* Cells */
+    .cell{
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    audio{
+      width: 230px;
+      max-width: 100%;
+      border-radius: 999px;
+      outline: none;
+    }
+
+    .spec{
+      width: 230px;
+      max-width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.30);
+      cursor: zoom-in;
+      background: rgba(0,0,0,0.18);
+    }
+
+    .filelink{
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255,255,255,0.25);
+      padding-bottom: 1px;
+    }
+    .filelink:hover{ color: rgba(255,255,255,0.90); }
+
+    /* Modal */
+    .modal{
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.70);
+      z-index: 999;
+      padding: 22px;
+    }
+    .modal.open{ display:flex; }
+    .modal-inner{
+      max-width: min(1100px, 96vw);
+      max-height: 90vh;
+      background: rgba(15,22,44,0.92);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display:flex;
+      flex-direction: column;
+    }
+    .modal-bar{
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .modal-close{
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: 0.15s ease;
+      user-select:none;
+    }
+    .modal-close:hover{ transform: translateY(-1px); border-color: rgba(124,92,255,0.55); }
+    .modal-img-wrap{
+      padding: 16px;
+      overflow:auto;
+    }
+    .modal-img{
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    /* Footer */
+    footer{
+      margin-top: 34px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    code{
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
   </style>
 </head>
-<body>
-<div class="wrap">
-  <h1>CMC-ASP Audio Demo</h1>
-  <p class="subtitle"><b>80% structured pruning</b> results on multimodal (ACM + BCM) speech enhancement.</p>
 
-  <div class="note">
-    <b>Contents</b><br/>
-    For each model family (MMINet / LAU-Net / Attention-based LAU-Net), we provide paired examples (female/male) including
-    inputs (Noisy, ACM, BCM) and enhanced outputs from pruning baselines (CMC-ASP, PP, TP, BN, MANU).
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="title">CMC-ASP Demo Page</div>
+        <div class="subtitle">Audio & spectrogram comparisons (BN / PP / TP / MANU / CMC-ASP)</div>
+      </div>
+      <div class="navchips" id="navchips"></div>
+    </div>
   </div>
 
-  <p class="small">
-    Spectrograms: y-axis 0–4 kHz, x-axis time (s), log-scaled magnitude.
-  </p>
+  <div class="container">
+    <div class="hero">
+      <h1>CMC-ASP: Fusion-aware Compression for Multimodal Speech Enhancement</h1>
+      <p>
+        <b>One-line Summary (EN):</b> Side-by-side qualitative demos (audio + log spectrogram) comparing baseline pruning methods and CMC-ASP on multimodal SE models.
+        <br/>
+        This page is generated from the uploaded folders under <code>WAV/</code>.
+        If you move <code>index.html</code> into a different folder, update <code>BASE</code> in the script.
+      </p>
 
-  <hr/>
+      <div class="meta-row">
+        <div class="badges">
+          <div class="badge"><span class="dot"></span> Ours: CMC-ASP</div>
+          <div class="badge"><span class="dot green"></span> Models: DCCRN / MMINet / LAU-Net</div>
+          <div class="badge"><span class="dot warn"></span> Samples: p00_u32, p24_u25</div>
+        </div>
+        <div class="toggles">
+          <label class="toggle">
+            <input type="checkbox" id="toggleSpec" checked />
+            Show spectrograms
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="toggleLinks" />
+            Show file links
+          </label>
+        </div>
+      </div>
+    </div>
 
-  <!-- =========================================================
-       Helper note about paths
-       audio: assets/audio/<MODEL_DIR>/<FILE>.mp3
-       img  : assets/img/<MODEL_DIR>/<FILE>.png
-       ========================================================= -->
+    <div id="sections"></div>
 
-  <!-- =========================
-       SECTION: MMINet (80% pruned)
-       ========================= -->
-  <h2 class="model-title">MMINet (80% pruned)</h2>
-  <table class="sticky-head">
-    <thead>
-      <tr>
-        <th class="col-sample">Sample</th>
-        <th>Noisy</th>
-        <th>ACM</th>
-        <th>BCM</th>
-        <th>CMC-ASP</th>
-        <th>PP</th>
-        <th>TP</th>
-        <th>BN</th>
-        <th>MANU</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- ===== Example: S01 female ===== -->
-      <tr>
-        <td><b>S01 (F)</b></td>
+    <footer>
+      <div>
+        <b>Notes</b><br/>
+        • “Noisy (ACM)” plays <code>*_noisy.wav</code> and shows <code>*_acm.PNG</code> (fallback: <code>*_noisy.PNG</code>).<br/>
+        • Clean spectrograms were not found in your PNG folders; only the clean audio is shown.<br/>
+        • File/Folder names on GitHub Pages are case-sensitive (e.g., <code>.PNG</code> vs <code>.png</code>).
+      </div>
+    </footer>
+  </div>
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_noisy.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_female_noisy.png" alt="s01 female noisy">
-        </td>
+  <!-- Modal for zoom -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-inner">
+      <div class="modal-bar">
+        <div id="modalCaption">Spectrogram</div>
+        <div class="modal-close" id="modalClose">Close</div>
+      </div>
+      <div class="modal-img-wrap">
+        <img class="modal-img" id="modalImg" alt="Zoomed spectrogram" />
+      </div>
+    </div>
+  </div>
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_acm.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_female_acm.png" alt="s01 female acm">
-        </td>
+  <script>
+    /**
+     * Put this index.html at repository root:
+     *   - BASE should stay "" (empty)
+     * If you put index.html inside /WAV, set:
+     *   - const BASE = "..";
+     */
+    const BASE = ""; // "" when index.html is at repo root
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_bcm.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_female_bcm.png" alt="s01 female bcm">
-        </td>
+    // Folder mapping (matches your uploaded structure)
+    const MODELS = [
+      { key: "DCCRN",  title: "DCCRN",  wavDir: "WAV/DCCRN_wav",  specDir: "WAV/DCCRN_spectrogram" },
+      { key: "MMINet", title: "MMINet", wavDir: "WAV/MMINet_wav", specDir: "WAV/MMINet_spectrogram" },
+      { key: "LAU-Net",title: "LAU-Net",wavDir: "WAV/LAU-Net_wav",specDir: "WAV/LAU-Net_spectrogram" },
+    ];
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_CMCASP.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_female_CMCASP.png" alt="s01 female cmcasp">
-        </td>
+    // Samples (add more ids here if you upload more)
+    const SAMPLES = [
+      { id: "p00_u32", label: "Sample A" },
+      { id: "p24_u25", label: "Sample B" },
+    ];
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_PP.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_female_PP.png" alt="s01 female pp">
-        </td>
+    // Column definitions
+    // - wavSuffix: audio file suffix
+    // - specSuffix: spectrogram file suffix (PNG) if available
+    // - specFallback: optional fallback if specSuffix doesn't exist
+    const COLS = [
+      { name: "Noisy (ACM)", wavSuffix: "_noisy.wav", specSuffix: "_acm.PNG", specFallback: "_noisy.PNG" },
+      { name: "BCM",         wavSuffix: "_bcm.wav",   specSuffix: "_bcm.PNG" },
+      { name: "Clean",       wavSuffix: "_clean.wav", specSuffix: "_acm.PNG" },
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_TP.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_female_TP.png" alt="s01 female tp">
-        </td>
+      { name: "BN",          wavSuffix: "_BN.wav",     specSuffix: "_bn.PNG" },
+      { name: "PP",          wavSuffix: "_PP.wav",     specSuffix: "_pp.PNG" },
+      { name: "TP",          wavSuffix: "_TP.wav",     specSuffix: "_tp.PNG" },
+      { name: "MANU",        wavSuffix: "_MANU.wav",   specSuffix: "_manu.PNG" },
+      { name: "CMC-ASP",     wavSuffix: "_CMCASP.wav", specSuffix: "_cmcasp.PNG", highlight: true },
+    ];
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_BN.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_female_BN.png" alt="s01 female bn">
-        </td>
+    const sectionsEl = document.getElementById("sections");
+    const navEl = document.getElementById("navchips");
+    const toggleSpec = document.getElementById("toggleSpec");
+    const toggleLinks = document.getElementById("toggleLinks");
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_female_MANU.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_female_MANU.png" alt="s01 female manu">
-        </td>
-      </tr>
+    // Modal
+    const modal = document.getElementById("modal");
+    const modalImg = document.getElementById("modalImg");
+    const modalCaption = document.getElementById("modalCaption");
+    const modalClose = document.getElementById("modalClose");
 
-      <!-- ===== Example: S01 male ===== -->
-      <tr>
-        <td><b>S01 (M)</b></td>
+    function joinPath(...parts){
+      const p = parts.filter(Boolean).join("/").replaceAll("//","/");
+      return BASE ? `${BASE}/${p}` : p;
+    }
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_noisy.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_male_noisy.png" alt="s01 male noisy">
-        </td>
+    function makeNav(){
+      MODELS.forEach(m => {
+        const a = document.createElement("a");
+        a.className = "chip";
+        a.href = `#${m.key.toLowerCase()}`;
+        a.textContent = m.title;
+        navEl.appendChild(a);
+      });
+    }
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_acm.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_male_acm.png" alt="s01 male acm">
-        </td>
+    function createCell(model, sampleId, col){
+      const cell = document.createElement("div");
+      cell.className = "cell";
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_bcm.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_male_bcm.png" alt="s01 male bcm">
-        </td>
+      const wavPath = joinPath(model.wavDir, `${sampleId}${col.wavSuffix}`);
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.preload = "none";
+      audio.src = wavPath;
+      cell.appendChild(audio);
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_CMCASP.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_male_CMCASP.png" alt="s01 male cmcasp">
-        </td>
+      // Optional links (hidden by default)
+      const link = document.createElement("a");
+      link.className = "filelink filelink-wav";
+      link.href = wavPath;
+      link.textContent = "open wav";
+      link.target = "_blank";
+      link.style.display = "none";
+      cell.appendChild(link);
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_PP.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_male_PP.png" alt="s01 male pp">
-        </td>
+      // Spectrogram
+      if (col.specSuffix){
+        const img = document.createElement("img");
+        img.className = "spec";
+        img.loading = "lazy";
+        img.alt = `${model.title} ${sampleId} ${col.name} spectrogram`;
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_TP.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_male_TP.png" alt="s01 male tp">
-        </td>
+        const primary = joinPath(model.specDir, `${sampleId}${col.specSuffix}`);
+        img.src = primary;
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_BN.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_male_BN.png" alt="s01 male bn">
-        </td>
+        // fallback if provided
+        if (col.specFallback){
+          const fallback = joinPath(model.specDir, `${sampleId}${col.specFallback}`);
+          img.onerror = () => {
+            // if primary fails, try fallback; if fallback fails, hide
+            if (img.src.endsWith(col.specSuffix)){
+              img.src = fallback;
+            } else {
+              img.style.display = "none";
+            }
+          };
+        } else {
+          img.onerror = () => { img.style.display = "none"; };
+        }
 
-        <td>
-          <audio controls preload="none"><source src="assets/audio/mminet_pr80/s01_male_MANU.mp3" type="audio/mpeg"></audio>
-          <img class="spec" src="assets/img/mminet_pr80/s01_male_MANU.png" alt="s01 male manu">
-        </td>
-      </tr>
+        img.addEventListener("click", () => {
+          modalImg.src = img.src;
+          modalCaption.textContent = `${model.title} · ${sampleId} · ${col.name}`;
+          modal.classList.add("open");
+        });
 
-      <!-- Copy additional rows (S02, S03, ...) by duplicating blocks above -->
-    </tbody>
-  </table>
+        cell.appendChild(img);
 
-  <hr/>
+        const link2 = document.createElement("a");
+        link2.className = "filelink filelink-png";
+        link2.href = primary;
+        link2.textContent = "open png";
+        link2.target = "_blank";
+        link2.style.display = "none";
+        cell.appendChild(link2);
+      } else {
+        // no spectrogram available
+        const note = document.createElement("div");
+        note.style.fontSize = "11px";
+        note.style.color = "rgba(255,255,255,0.55)";
+        note.textContent = "Spectrogram: N/A";
+        cell.appendChild(note);
+      }
 
-  <!-- =========================
-       SECTION: LAU-Net (80% pruned)
-       ========================= -->
-  <h2 class="model-title">LAU-Net (80% pruned)</h2>
-  <p class="small">Same table layout; paths use <code>assets/audio/launet_pr80/</code> and <code>assets/img/launet_pr80/</code>.</p>
-  <!-- Duplicate the table above and replace mminet_pr80 -> launet_pr80 -->
+      // Highlight CMC-ASP column slightly via border (optional)
+      if (col.highlight){
+        cell.style.padding = "10px";
+        cell.style.borderRadius = "14px";
+        cell.style.border = "1px solid rgba(124,92,255,0.55)";
+        cell.style.background = "rgba(124,92,255,0.08)";
+      }
 
-  <hr/>
+      return cell;
+    }
 
-  <!-- =========================
-       SECTION: Attention-based Early Fusion DCCRN (80% pruned)
-       ========================= -->
-  <h2 class="model-title">Attention-based LAU-Net (80% pruned)</h2>
-  <p class="small">Same table layout; paths use <code>assets/audio/attn_launet_pr80/</code> and <code>assets/img/attn_launet_pr80/</code>.</p>
-  <!-- Duplicate the table above and replace mminet_pr80 -> attn_launet_pr80 -->
+    function buildModelSection(model){
+      const section = document.createElement("section");
+      section.id = model.key.toLowerCase();
 
-  <hr/>
+      const head = document.createElement("div");
+      head.className = "section-head";
+      head.innerHTML = `
+        <div>
+          <h2>${model.title}</h2>
+          <div class="hint">Folder: <code>${model.wavDir}</code> &nbsp; | &nbsp; <code>${model.specDir}</code></div>
+        </div>
+        <div class="hint">Scroll horizontally if the table is wide.</div>
+      `;
+      section.appendChild(head);
 
-  <h2>Implementation Notes (Paper-faithful details)</h2>
-  <ul class="small">
-    <li><b>Exact statistic used:</b> for each sample <i>x</i>, we compute channel-wise <code>||O_{F,C}(x)||_1</code> by summing absolute activations over all non-channel dimensions, then estimate <code>E[||O_{F,C}(x)||_1]</code> over the calibration set.</li>
-    <li><b>Unbiased expectation over samples:</b> accumulation is performed by summing <code>||O_{F,C}(x)||_1</code> over <b>all samples</b> and dividing by the <b>total number of samples</b>, which remains correct even if the last batch size differs.</li>
-    <li><b>Zero-masking location:</b> modality-wise zero-masking is applied <b>at the input</b> (Noisy-only / BCM-only), matching the method definition.</li>
-    <li><b>Numerical stability:</b> <code>&epsilon;</code> is used only to avoid division-by-zero when the multimodal reference response is very small; it does not change the intended scoring behavior.</li>
-  </ul>
+      const card = document.createElement("div");
+      card.className = "card";
 
-</div>
+      const wrap = document.createElement("div");
+      wrap.className = "table-wrap";
+
+      const table = document.createElement("table");
+
+      // header
+      const thead = document.createElement("thead");
+      const trh = document.createElement("tr");
+
+      const th0 = document.createElement("th");
+      th0.className = "sticky";
+      th0.textContent = "Utterance";
+      trh.appendChild(th0);
+
+      COLS.forEach(c => {
+        const th = document.createElement("th");
+        th.textContent = c.name;
+        trh.appendChild(th);
+      });
+
+      thead.appendChild(trh);
+      table.appendChild(thead);
+
+      // body
+      const tbody = document.createElement("tbody");
+
+      SAMPLES.forEach(s => {
+        const tr = document.createElement("tr");
+
+        const td0 = document.createElement("td");
+        td0.className = "sticky";
+        td0.innerHTML = `
+          <div class="sample-id">${s.label}</div>
+          <div class="sample-sub">${s.id}</div>
+        `;
+        tr.appendChild(td0);
+
+        COLS.forEach(c => {
+          const td = document.createElement("td");
+          td.appendChild(createCell(model, s.id, c));
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      wrap.appendChild(table);
+      card.appendChild(wrap);
+      section.appendChild(card);
+
+      return section;
+    }
+
+    function applyToggles(){
+      // spectrogram show/hide
+      document.body.classList.toggle("hide-spec", !toggleSpec.checked);
+      document.querySelectorAll("img.spec").forEach(img => {
+        img.style.display = toggleSpec.checked ? "" : "none";
+      });
+
+      // links show/hide
+      const showLinks = toggleLinks.checked;
+      document.querySelectorAll(".filelink").forEach(a => {
+        a.style.display = showLinks ? "inline-block" : "none";
+      });
+    }
+
+    // modal close behaviors
+    modalClose.addEventListener("click", () => modal.classList.remove("open"));
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.remove("open");
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") modal.classList.remove("open");
+    });
+
+    // Init
+    makeNav();
+    MODELS.forEach(m => sectionsEl.appendChild(buildModelSection(m)));
+
+    toggleSpec.addEventListener("change", applyToggles);
+    toggleLinks.addEventListener("change", applyToggles);
+    applyToggles();
+  </script>
 </body>
 </html>

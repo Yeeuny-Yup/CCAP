@@ -17,6 +17,12 @@ This repo focuses on **scoring only** (activation collection + sensitivity/impor
 
 ---
 
+## Abstract
+
+Multimodal speech enhancement (MMSE) improves speech intelligibility in noisy environments by leveraging complementary strengths of various signals. However, complex MMSE models and substantial computational demands pose challenges for implementation on wearable devices such as headsets and earbuds. This has driven the need for model compression; however, prior approaches are often not tailored to multimodal fusion and may fail to preserve fusion-critical information under practical noise and cross-modal mismatch. To address these limitations, we introduce cross-modal consistency-aware structured pruning (CMC-ASP). CMC-ASP estimates channel importance using modality-specific zero masking and ranks channels by response consistency with the multimodal input to preserve modality-shared information. Experiments on a paired air–bone dataset show that CMC-ASP improves PESQ and STOI across multiple architectures over prior pruning baselines and reduces inference latency at equivalent pruning ratios, supporting embedded deployment.
+
+---
+
 ## Method Overview (CMC-ASP Scoring)
 
 CMC-ASP evaluates channel importance by comparing channel responses under **modality-wise zero-masking** against a **multimodal reference**.

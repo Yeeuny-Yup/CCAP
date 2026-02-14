@@ -17,35 +17,47 @@ Specifically, it implements:
 
 ---
 
-## Method Overview (CMC-ASP Scoring)
-
 Given a paired multimodal input
-\[
-\mathbf{x} = [x_{\text{Noisy}}, x_{\text{BCM}}],
-\]
+$$
+\mathbf{x} = [x_{\mathrm{Noisy}}, x_{\mathrm{BCM}}],
+$$
 CMC-ASP evaluates three input conditions:
-1. **Multimodal reference**: \(\mathbf{x}^{\text{Multi}} = [x_{\text{Noisy}}, x_{\text{BCM}}]\)
-2. **Noisy-only (BCM masked)**: \(\mathbf{x}^{\text{Noisy}} = [x_{\text{Noisy}}, 0]\)
-3. **BCM-only (Noisy masked)**: \(\mathbf{x}^{\text{BCM}} = [0, x_{\text{BCM}}]\)
 
-For a target convolutional layer/filter \(F\) and output channel \(C\), let \(O_{F,C}(\cdot)\) be the channel activation.
-CMC-ASP summarizes activation magnitude using the **L1 norm** and computes dataset-level expectations over a calibration set \(D_{\text{cal}}\):
+1. **Multimodal reference**:
+$$
+\mathbf{x}^{\mathrm{Multi}} = [x_{\mathrm{Noisy}}, x_{\mathrm{BCM}}]
+$$
 
-- Normalized sensitivities:
-\[
-S^{\text{Noisy}}_{F,C} =
-\frac{\mathbb{E}_{x \sim D_{\text{cal}}}\big[\| O^{\text{Noisy}}_{F,C}(x)\|_1\big]}
-{\mathbb{E}_{x \sim D_{\text{cal}}}\big[\| O^{\text{Multi}}_{F,C}(x)\|_1\big] + \epsilon},
-\qquad
-S^{\text{BCM}}_{F,C} =
-\frac{\mathbb{E}_{x \sim D_{\text{cal}}}\big[\| O^{\text{BCM}}_{F,C}(x)\|_1\big]}
-{\mathbb{E}_{x \sim D_{\text{cal}}}\big[\| O^{\text{Multi}}_{F,C}(x)\|_1\big] + \epsilon}.
-\]
+2. **Noisy-only (BCM masked)**:
+$$
+\mathbf{x}^{\mathrm{Noisy}} = [x_{\mathrm{Noisy}}, 0]
+$$
 
-- Final importance score (symmetric aggregation):
-\[
-IS_{F,C} = 0.5 \cdot S^{\text{Noisy}}_{F,C} + 0.5 \cdot S^{\text{BCM}}_{F,C}.
-\]
+3. **BCM-only (Noisy masked)**:
+$$
+\mathbf{x}^{\mathrm{BCM}} = [0, x_{\mathrm{BCM}}]
+$$
+
+For a target layer (or filter) $F$ and output channel $C$, let $O_{F,C}(\cdot)$ be the channel activation.
+CMC-ASP summarizes activation magnitude using the L1 norm and computes dataset-level expectations over a calibration set $D_{\mathrm{cal}}$.
+
+**Normalized sensitivities**:
+$$
+S^{\mathrm{Noisy}}_{F,C} =
+\frac{\mathbb{E}_{x \sim D_{\mathrm{cal}}}\big[\| O^{\mathrm{Noisy}}_{F,C}(x)\|_1\big]}
+{\mathbb{E}_{x \sim D_{\mathrm{cal}}}\big[\| O^{\mathrm{Multi}}_{F,C}(x)\|_1\big] + \epsilon}
+$$
+
+$$
+S^{\mathrm{BCM}}_{F,C} =
+\frac{\mathbb{E}_{x \sim D_{\mathrm{cal}}}\big[\| O^{\mathrm{BCM}}_{F,C}(x)\|_1\big]}
+{\mathbb{E}_{x \sim D_{\mathrm{cal}}}\big[\| O^{\mathrm{Multi}}_{F,C}(x)\|_1\big] + \epsilon}
+$$
+
+**Final importance score (symmetric aggregation)**:
+$$
+IS_{F,C} = 0.5 \cdot S^{\mathrm{Noisy}}_{F,C} + 0.5 \cdot S^{\mathrm{BCM}}_{F,C}.
+$$
 
 A high \(IS_{F,C}\) indicates that a channel responds **consistently** under both zero-masked conditions relative to the multimodal reference, suggesting **modality-shared / fusion-relevant** behavior.
 

@@ -4,7 +4,6 @@ CMC-ASP: Hook-based activation statistics collection.
 
 This module collects per-channel statistics needed by CMC-ASP scoring.
 
-Paper-consistent statistic
 --------------------------
 For a target layer F and channel C, given a sample x:
 
@@ -17,7 +16,6 @@ We estimate E[||O_{F,C}(x)||_1] over a calibration loader by:
 
 This matches the expectation form used in Eqs. (3)-(4).
 
-User-supplied adapters
 ----------------------
 To keep this repo model-agnostic, you must provide:
   - forward_fn(model, noisy_acm, bcm) -> Any

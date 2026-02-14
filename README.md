@@ -24,11 +24,11 @@ CMC-ASP evaluates channel importance by comparing channel responses under **moda
 ### 1) Paired input and three masking conditions
 
 <p align="center">
-  <img src="eq1.png" width="300" alt="Paired input definition"/>
+  <img src="eq1.png" width="200" alt="Paired input definition"/>
 </p>
 
 <p align="center">
-  <img src="eq2.png" width="300" alt="Three input conditions: Multi / Noisy-only / BCM-only"/>
+  <img src="eq2.png" width="200" alt="Three input conditions: Multi / Noisy-only / BCM-only"/>
 </p>
 
 ### 2) Channel response statistic
@@ -37,7 +37,7 @@ For a target layer (or filter) $F$ and output channel $C$, let $O_{F,C}(\cdot)$ 
 CMC-ASP summarizes activation magnitude using the L1 norm and computes dataset-level expectations over a calibration set $D_{\mathrm{cal}}$.
 
 <p align="center">
-  <img src="eq3.png" width="400" alt="Channel response statistic with L1 norm"/>
+  <img src="eq3.png" width="200" alt="Channel response statistic with L1 norm"/>
 </p>
 
 ### 3) Normalized sensitivities and final importance
@@ -45,13 +45,13 @@ CMC-ASP summarizes activation magnitude using the L1 norm and computes dataset-l
 CMC-ASP computes normalized sensitivities by measuring how well each channel response is preserved under each masked condition relative to the multimodal reference.
 
 <p align="center">
-  <img src="eq4_5.png" width="400" alt="Normalized sensitivities for Noisy and BCM"/>
+  <img src="eq4_5.png" width="200" alt="Normalized sensitivities for Noisy and BCM"/>
 </p>
 
 The final importance score is obtained by a symmetric aggregation of the two sensitivities:
 
 <p align="center">
-  <img src="eq6.png" width="400" alt="Final importance score"/>
+  <img src="eq6.png" width="200" alt="Final importance score"/>
 </p>
 
 A high $IS_{F,C}$ indicates that a channel responds **consistently** under both zero-masked conditions relative to the multimodal reference, suggesting **modality-shared / fusion-relevant** behavior.

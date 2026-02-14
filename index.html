@@ -87,6 +87,7 @@
       text-decoration: none;
       transition: 0.15s ease;
       user-select: none;
+      white-space: nowrap;
     }
     .chip:hover{
       transform: translateY(-1px);
@@ -158,6 +159,7 @@
     /* Sections */
     section{
       margin-top: 26px;
+      scroll-margin-top: 78px; /* for sticky topbar */
     }
     .section-head{
       display:flex; align-items: flex-end; justify-content: space-between;
@@ -180,6 +182,32 @@
       box-shadow: var(--shadow);
       overflow: hidden;
     }
+    .card-pad{
+      padding: 18px 18px;
+    }
+    .card-pad h3{
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.90);
+    }
+    .card-pad p, .card-pad li{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+    .card-pad p + p{ margin-top: 10px; }
+    .card-pad ol{
+      margin: 10px 0 0 18px;
+      padding: 0;
+    }
+    .card-pad li{ margin: 8px 0; }
+    .card-pad a{
+      color: rgba(255,255,255,0.90);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255,255,255,0.35);
+    }
+    .card-pad a:hover{ color: #fff; border-bottom-color: rgba(124,92,255,0.7); }
 
     /* Table */
     .table-wrap{
@@ -205,6 +233,33 @@
       padding: 12px 12px;
       white-space: nowrap;
     }
+    thead tr.group th{
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.60);
+      background: rgba(12,18,38,0.96);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    
+    /* second header row sticks under the group row */
+    thead tr.cols th{
+      position: sticky;
+      top: 38px;            /* group row height에 맞춰줌 (필요하면 36~44 사이로 조절) */
+      z-index: 2;
+      background: rgba(15,22,44,0.92);
+    }
+    
+    /* the sticky first header cell spans two rows */
+    thead tr.group th.sticky{
+      top: 0;
+      z-index: 4;
+      text-align: left;
+    }
     tbody td{
       border-bottom: 1px solid rgba(255,255,255,0.07);
       padding: 12px 12px;
@@ -222,8 +277,8 @@
       z-index: 3;
       background: rgba(15,22,44,0.96);
       border-right: 1px solid rgba(255,255,255,0.10);
-      min-width: 130px;
-      max-width: 180px;
+      min-width: 150px;
+      max-width: 200px;
     }
     tbody td.sticky{
       background: rgba(18,26,52,0.96);
@@ -254,14 +309,18 @@
       outline: none;
     }
 
+    /* Spectrogram: unify size across all columns */
     .spec{
       width: 230px;
+      height: 120px;          /* fixed height: prevents "Noisy" from looking larger */
       max-width: 100%;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.14);
       box-shadow: 0 6px 18px rgba(0,0,0,0.30);
       cursor: zoom-in;
       background: rgba(0,0,0,0.18);
+      object-fit: contain;    /* keep entire spectrogram visible */
+      display: block;
     }
 
     .filelink{
@@ -349,7 +408,7 @@
     <div class="topbar-inner">
       <div class="brand">
         <div class="title">CMC-ASP Demo Page</div>
-        <div class="subtitle">Audio & spectrogram comparisons (BN / PP / TP / MANU / CMC-ASP)</div>
+        <div class="subtitle">Audio & spectrogram comparisons (PP / TP / BN / MANU / CMC-ASP)</div>
       </div>
       <div class="navchips" id="navchips"></div>
     </div>
@@ -361,15 +420,14 @@
       <p>
         <b>One-line Summary (EN):</b> Side-by-side qualitative demos (audio + log spectrogram) comparing baseline pruning methods and CMC-ASP on multimodal SE models.
         <br/>
-        This page is generated from the uploaded folders under <code>WAV/</code>.
-        If you move <code>index.html</code> into a different folder, update <code>BASE</code> in the script.
+        This page is generated from the uploaded folders under <code>WAV/</code>. If you move <code>index.html</code> into a different folder, update <code>BASE</code> in the script.
       </p>
 
       <div class="meta-row">
         <div class="badges">
           <div class="badge"><span class="dot"></span> Ours: CMC-ASP</div>
-          <div class="badge"><span class="dot green"></span> Models: DCCRN / MMINet / LAU-Net</div>
-          <div class="badge"><span class="dot warn"></span> Samples: p00_u32, p24_u25</div>
+          <div class="badge"><span class="dot green"></span> Models: DCCRN [5] / MMINet [6] / LAU-Net [7]</div>
+          <div class="badge"><span class="dot warn"></span> Samples: Male, Female</div>
         </div>
         <div class="toggles">
           <label class="toggle">
@@ -384,14 +442,79 @@
       </div>
     </div>
 
+    <!-- Introduction -->
+    <section id="introduction">
+      <div class="section-head">
+        <div>
+          <h2>Introduction</h2>
+          <div class="hint">Qualitative demo page for multimodal speech enhancement + structured pruning</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-pad">
+          <p>
+            This page provides side-by-side comparisons of enhanced outputs from three representative multimodal speech enhancement models:
+            Attention-based Early Fusion DCCRN <b>[5]</b>, MMINet <b>[6]</b>, and LAU-Net <b>[7]</b>.
+            For each model, we compare CMC-ASP against common structured pruning baselines (PP <b>[1]</b>, TP <b>[2]</b>, BN-slimming <b>[3]</b>, and MANU <b>[4]</b>)
+            using paired <i>audio</i> and <i>log-magnitude spectrograms</i>.
+          </p>
+          <p>
+            <b>How to read:</b> “Noisy ACM” and “BCM” are input signals. “Clean ACM (Label)” is the ground-truth reference label (AC microphone).
+            Other columns are enhanced outputs produced by a pruned model (or corresponding baseline).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- References -->
+    <section id="references">
+      <div class="section-head">
+        <div>
+          <h2>References</h2>
+          <div class="hint">Papers referenced by methods and model architectures</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-pad">
+          <ol>
+            <li>[1] J.-Y. Wu, C. Yu, S.-W. Fu, C.-T. Liu, S.-Y. Chien, and Y. Tsao, “Increasing compactness of deep learning based speech enhancement models with parameter pruning and quantization techniques,” <i>IEEE Signal Processing Letters</i>, vol. 26, pp. 1887–1891, 2019.</li>
+            <li>[2] P. Molchanov, S. Tyree, T. Karras, T. Aila, and J. Kautz, “Pruning convolutional neural networks for resource efficient inference,” in <i>Proceedings of the International Conference on Learning Representations (ICLR)</i>, 2017. <span style="color:rgba(255,255,255,0.72)">[Online]</span>. Available: <a href="https://openreview.net/forum?id=SJGCiw5gl" target="_blank" rel="noopener">openreview.net/forum?id=SJGCiw5gl</a></li>
+            <li>[3] Z. Liu, J. Li, Z. Shen, G. Huang, S. Yan, and C. Zhang, “Learning efficient convolutional networks through network slimming,” in <i>Proceedings of the IEEE International Conference on Computer Vision</i>, 2017, pp. 2736–2744.</li>
+            <li>[4] Z. Liu, G. Dou, X. Yuan, C. Zhang, Z. Tan, and M. Jiang, “Modality-aware neuron pruning for unlearning in multimodal large language models,” <i>arXiv preprint</i> arXiv:2502.15910, 2025. <span style="color:rgba(255,255,255,0.72)">[Online]</span>. Available: <a href="https://arxiv.org/abs/2502.15910" target="_blank" rel="noopener">arxiv.org/abs/2502.15910</a></li>
+            <li>[5] H. Wang, X. Zhang, and D. Wang, “Attention-based fusion for bone-conducted and air-conducted speech enhancement in the complex domain,” in <i>ICASSP 2022—2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)</i>. IEEE, 2022, pp. 7757–7761.</li>
+            <li>[6] M. Wang, J. Chen, X. Zhang, Z. Huang, and S. Rahardja, “Multimodal speech enhancement with bone-conducted speech in time domain,” <i>Applied Acoustics</i>, vol. 200, p. 109058, 2022.</li>
+            <li>[7] Y. Song, Y. Kim, and Y. Chung, “Lightweight speech enhancement model based on harmonic attention and phase estimation with skin-attachable accelerometer,” in <i>Proc. Interspeech</i>, 2025, pp. 66–70.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison Table note -->
+    <section id="comparison">
+      <div class="section-head">
+        <div>
+          <h2>Comparison Table</h2>
+          <div class="hint">Audio + spectrogram (log-scale) comparisons</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-pad">
+          <p>
+            The spectrograms are log-scaled for visualization. All spectrogram thumbnails are rendered with a fixed size for consistent comparison.
+            Click a spectrogram image to zoom in.
+          </p>
+        </div>
+      </div>
+    </section>
+
     <div id="sections"></div>
 
     <footer>
       <div>
         <b>Notes</b><br/>
-        • “Noisy (ACM)” plays <code>*_noisy.wav</code> and shows <code>*_acm.PNG</code> (fallback: <code>*_noisy.PNG</code>).<br/>
+        • “Noisy ACM” plays <code>*_noisy.wav</code> and shows <code>*_acm.PNG</code> (fallback: <code>*_noisy.PNG</code>).<br/>
         • Clean spectrograms were not found in your PNG folders; only the clean audio is shown.<br/>
-        • File/Folder names on GitHub Pages are case-sensitive (e.g., <code>.PNG</code> vs <code>.png</code>).
+        • GitHub Pages is case-sensitive: keep <code>.PNG</code> exactly as uploaded.
       </div>
     </footer>
   </div>
@@ -420,31 +543,29 @@
 
     // Folder mapping (matches your uploaded structure)
     const MODELS = [
-      { key: "DCCRN",  title: "DCCRN",  wavDir: "WAV/DCCRN_wav",  specDir: "WAV/DCCRN_spectrogram" },
-      { key: "MMINet", title: "MMINet", wavDir: "WAV/MMINet_wav", specDir: "WAV/MMINet_spectrogram" },
-      { key: "LAU-Net",title: "LAU-Net",wavDir: "WAV/LAU-Net_wav",specDir: "WAV/LAU-Net_spectrogram" },
+      { key: "DCCRN",  title: "Attention-based Early Fusion DCCRN", ref: "[5]",  wavDir: "WAV/DCCRN_wav",  specDir: "WAV/DCCRN_spectrogram" },
+      { key: "MMINet", title: "MMINet",                               ref: "[6]",  wavDir: "WAV/MMINet_wav", specDir: "WAV/MMINet_spectrogram" },
+      { key: "LAU-Net",title: "LAU-Net",                              ref: "[7]",  wavDir: "WAV/LAU-Net_wav",specDir: "WAV/LAU-Net_spectrogram" },
     ];
 
-    // Samples (add more ids here if you upload more)
+    // Samples (display name changed, but file id stays the same)
     const SAMPLES = [
-      { id: "p00_u32", label: "Sample A" },
-      { id: "p24_u25", label: "Sample B" },
+      { id: "p00_u32", label: "Sample A", display: "Male" },
+      { id: "p24_u25", label: "Sample B", display: "Female" },
     ];
 
-    // Column definitions
-    // - wavSuffix: audio file suffix
-    // - specSuffix: spectrogram file suffix (PNG) if available
-    // - specFallback: optional fallback if specSuffix doesn't exist
+    // Column order (requested)
     const COLS = [
-      { name: "Noisy (ACM)", wavSuffix: "_noisy.wav", specSuffix: "_acm.PNG", specFallback: "_noisy.PNG" },
-      { name: "BCM",         wavSuffix: "_bcm.wav",   specSuffix: "_bcm.PNG" },
-      { name: "Clean",       wavSuffix: "_clean.wav", specSuffix: "_acm.PNG" },
+      { name: "Noisy ACM",          wavSuffix: "_noisy.wav",  specSuffix: "_noisy.PNG",    specFallback: "_noisy.PNG" },
+      { name: "BCM",               wavSuffix: "_bcm.wav",    specSuffix: "_bcm.PNG" },
+      { name: "Clean ACM (Label)", wavSuffix: "_clean.wav",  specSuffix:  "_acm.PNG"},
 
-      { name: "BN",          wavSuffix: "_BN.wav",     specSuffix: "_bn.PNG" },
-      { name: "PP",          wavSuffix: "_PP.wav",     specSuffix: "_pp.PNG" },
-      { name: "TP",          wavSuffix: "_TP.wav",     specSuffix: "_tp.PNG" },
-      { name: "MANU",        wavSuffix: "_MANU.wav",   specSuffix: "_manu.PNG" },
-      { name: "CMC-ASP",     wavSuffix: "_CMCASP.wav", specSuffix: "_cmcasp.PNG", highlight: true },
+      { name: "CMC-ASP",           wavSuffix: "_CMCASP.wav", specSuffix: "_cmcasp.PNG", highlight: true },
+
+      { name: "PP [1]",            wavSuffix: "_PP.wav",     specSuffix: "_pp.PNG" },
+      { name: "TP [2]",            wavSuffix: "_TP.wav",     specSuffix: "_tp.PNG" },
+      { name: "BN [3]",            wavSuffix: "_BN.wav",     specSuffix: "_bn.PNG" },
+      { name: "MANU [4]",          wavSuffix: "_MANU.wav",   specSuffix: "_manu.PNG" },
     ];
 
     const sectionsEl = document.getElementById("sections");
@@ -464,11 +585,24 @@
     }
 
     function makeNav(){
+      const intro = [
+        { text: "Introduction", href: "#introduction" },
+        { text: "References", href: "#references" },
+        { text: "Comparison", href: "#comparison" },
+      ];
+      intro.forEach(x => {
+        const a = document.createElement("a");
+        a.className = "chip";
+        a.href = x.href;
+        a.textContent = x.text;
+        navEl.appendChild(a);
+      });
+
       MODELS.forEach(m => {
         const a = document.createElement("a");
         a.className = "chip";
         a.href = `#${m.key.toLowerCase()}`;
-        a.textContent = m.title;
+        a.textContent = `${m.key} ${m.ref}`;
         navEl.appendChild(a);
       });
     }
@@ -490,6 +624,7 @@
       link.href = wavPath;
       link.textContent = "open wav";
       link.target = "_blank";
+      link.rel = "noopener";
       link.style.display = "none";
       cell.appendChild(link);
 
@@ -498,7 +633,7 @@
         const img = document.createElement("img");
         img.className = "spec";
         img.loading = "lazy";
-        img.alt = `${model.title} ${sampleId} ${col.name} spectrogram`;
+        img.alt = `${model.key} ${sampleId} ${col.name} spectrogram`;
 
         const primary = joinPath(model.specDir, `${sampleId}${col.specSuffix}`);
         img.src = primary;
@@ -507,7 +642,6 @@
         if (col.specFallback){
           const fallback = joinPath(model.specDir, `${sampleId}${col.specFallback}`);
           img.onerror = () => {
-            // if primary fails, try fallback; if fallback fails, hide
             if (img.src.endsWith(col.specSuffix)){
               img.src = fallback;
             } else {
@@ -520,7 +654,7 @@
 
         img.addEventListener("click", () => {
           modalImg.src = img.src;
-          modalCaption.textContent = `${model.title} · ${sampleId} · ${col.name}`;
+          modalCaption.textContent = `${model.title} ${model.ref} · ${sampleId} · ${col.name}`;
           modal.classList.add("open");
         });
 
@@ -531,10 +665,10 @@
         link2.href = primary;
         link2.textContent = "open png";
         link2.target = "_blank";
+        link2.rel = "noopener";
         link2.style.display = "none";
         cell.appendChild(link2);
       } else {
-        // no spectrogram available
         const note = document.createElement("div");
         note.style.fontSize = "11px";
         note.style.color = "rgba(255,255,255,0.55)";
@@ -542,7 +676,7 @@
         cell.appendChild(note);
       }
 
-      // Highlight CMC-ASP column slightly via border (optional)
+      // Highlight CMC-ASP column
       if (col.highlight){
         cell.style.padding = "10px";
         cell.style.borderRadius = "14px";
@@ -561,7 +695,7 @@
       head.className = "section-head";
       head.innerHTML = `
         <div>
-          <h2>${model.title}</h2>
+          <h2>${model.title} <span style="color:rgba(255,255,255,0.75)">${model.ref}</span></h2>
           <div class="hint">Folder: <code>${model.wavDir}</code> &nbsp; | &nbsp; <code>${model.specDir}</code></div>
         </div>
         <div class="hint">Scroll horizontally if the table is wide.</div>
@@ -604,7 +738,7 @@
         td0.className = "sticky";
         td0.innerHTML = `
           <div class="sample-id">${s.label}</div>
-          <div class="sample-sub">${s.id}</div>
+          <div class="sample-sub">${s.display}</div>
         `;
         tr.appendChild(td0);
 
@@ -627,7 +761,6 @@
 
     function applyToggles(){
       // spectrogram show/hide
-      document.body.classList.toggle("hide-spec", !toggleSpec.checked);
       document.querySelectorAll("img.spec").forEach(img => {
         img.style.display = toggleSpec.checked ? "" : "none";
       });

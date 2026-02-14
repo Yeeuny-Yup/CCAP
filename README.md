@@ -71,3 +71,7 @@ A high $IS_{F,C}$ indicates that a channel responds **consistently** under both 
 - **Numerical stability:** $\epsilon$ is included only to avoid division-by-zero when $E[|O^{Multi}_{F,C}(x)|_1]$ is very small; it does not change the intended scoring behavior.
 
 ---
+
+## Citation
+
+TBD.

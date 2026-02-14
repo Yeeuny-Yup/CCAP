@@ -61,11 +61,4 @@ A high \(IS_{F,C}\) indicates that a channel responds **consistently** under bot
   CMC-ASP sensitivity and importance computation:
   \(S^{\text{Noisy}}, S^{\text{BCM}}, IS\).
 
----
 
-## Installation
-
-This code is lightweight and only requires PyTorch.
-
-```bash
-pip install torch

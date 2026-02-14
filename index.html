@@ -259,14 +259,14 @@
       color: var(--muted);
       line-height: 1.4;
     }
-    .rowhint{
+    /* .rowhint{
       margin-top: 10px;
       font-size: 11px;
       color: rgba(255,255,255,0.55);
       border-top: 1px dashed rgba(255,255,255,0.14);
       padding-top: 10px;
       line-height: 1.5;
-    }
+    } */
 
     /* Cell content */
     .cell{
@@ -736,13 +736,17 @@
         const tdSticky = document.createElement("td");
         tdSticky.className = "sticky";
         tdSticky.rowSpan = 2;
+        // tdSticky.innerHTML = `
+        //   <div class="sample-id">${s.label}</div>
+        //   <div class="sample-sub">${s.display}</div>
+        //   <div class="rowhint">
+        //     <b>Top:</b> Noisy/BCM/Clean/Ours<br/>
+        //     <b>Bottom:</b> PP/TP/BN/MANU
+        //   </div>
+        // `;
         tdSticky.innerHTML = `
           <div class="sample-id">${s.label}</div>
           <div class="sample-sub">${s.display}</div>
-          <div class="rowhint">
-            <b>Top:</b> Noisy/BCM/Clean/Ours<br/>
-            <b>Bottom:</b> PP/TP/BN/MANU
-          </div>
         `;
         trTop.appendChild(tdSticky);
 

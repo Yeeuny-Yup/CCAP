@@ -59,13 +59,14 @@
       border-bottom: 1px solid var(--line);
     }
     .topbar-inner{
-      max-width: 1240px;
+      max-width: 1600px;   /* ✅ container와 맞추기 */
+      width: 100%;         /* ✅ 안전하게 꽉 채움 */
       margin: 0 auto;
-      padding: 14px 20px;
+      padding: 14px 20px;  /* ✅ container 좌우 padding과 동일 */
       display: flex;
       gap: 12px;
       align-items: center;
-      justify-content: space-between;
+      justify-content: space-between; /* 이미 OK */
     }
     .brand{
       display:flex; flex-direction: column; gap: 4px;

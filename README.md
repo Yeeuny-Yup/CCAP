@@ -2,7 +2,7 @@
 
 **Cross-Modal Consistency–Aware Structured Pruning for Efficient Speech Enhancement with Air- and Bone-Conduction Microphones**
 
-This repository provides the **channel scoring utilities** of **CCAP** (Cross-Modal Consistency–Aware Structured Pruning).
+This repository provides the **channel scoring utilities** of **CCAP** (Cross-modal Consistency–Aware structured Pruning).
 Specifically, it implements:
 - **Modality-wise zero-masking** (Noisy-ACM-only / BCM-only) at the input,
 - **Hook-based activation extraction** at target layers,

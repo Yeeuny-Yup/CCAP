@@ -12,7 +12,7 @@ This repo focuses on **scoring only** (activation collection + sensitivity/impor
 
 
 <p align="center">
-  <img src="fig1.png" width="950" alt="CCAP overview"/>
+  <img src="Fig1.png" width="950" alt="CCAP overview"/>
 </p>
 
 ---

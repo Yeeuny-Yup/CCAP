@@ -1,18 +1,18 @@
-# CMC-ASP
+# CCAP
 
 **Cross-Modal Consistency–Aware Structured Pruning for Efficient Speech Enhancement with Air- and Bone-Conduction Microphones**
 
-This repository provides the **channel scoring utilities** of **CMC-ASP** (Cross-Modal Consistency–Aware Structured Pruning).
+This repository provides the **channel scoring utilities** of **CCAP** (Cross-Modal Consistency–Aware Structured Pruning).
 Specifically, it implements:
 - **Modality-wise zero-masking** (Noisy-ACM-only / BCM-only) at the input,
 - **Hook-based activation extraction** at target layers,
-- **CMC-ASP sensitivities** and **importance scores** defined in the paper.
+- **CCAP sensitivities** and **importance scores** defined in the paper.
 
 This repo focuses on **scoring only** (activation collection + sensitivity/importance computation).  
 
 
 <p align="center">
-  <img src="fig1.png" width="950" alt="CMC-ASP overview"/>
+  <img src="fig1.png" width="950" alt="CCAP overview"/>
 </p>
 
 ---
@@ -22,15 +22,15 @@ This repo focuses on **scoring only** (activation collection + sensitivity/impor
 Multimodal speech enhancement (MMSE) improves speech intelligibility in noisy environments by leveraging complementary strengths of various signals.
 However, complex MMSE models and substantial computational demands pose challenges for implementation on wearable devices such as headsets and earbuds. 
 This has driven the need for model compression; however, prior approaches are often not tailored to multimodal fusion and may fail to preserve 
-fusion-critical information under practical noise and cross-modal mismatch. To address these limitations, we introduce cross-modal consistency-aware structured pruning (CMC-ASP). 
-CMC-ASP estimates channel importance using modality-specific zero masking and ranks channels by response consistency with the multimodal input to preserve modality-shared information. 
-Experiments on a paired air–bone dataset show that CMC-ASP improves PESQ and STOI across multiple architectures over prior pruning baselines and reduces inference latency at equivalent pruning ratios, supporting embedded deployment.
+fusion-critical information under practical noise and cross-modal mismatch. To address these limitations, we introduce cross-modal consistency-aware structured pruning (CCAP). 
+CCAP estimates channel importance using modality-specific zero masking and ranks channels by response consistency with the multimodal input to preserve modality-shared information. 
+Experiments on a paired air–bone dataset show that CCAP improves PESQ and STOI across multiple architectures over prior pruning baselines and reduces inference latency at equivalent pruning ratios, supporting embedded deployment.
 
 ---
 
-## Method Overview (CMC-ASP Scoring)
+## Method Overview (CCAP Scoring)
 
-CMC-ASP evaluates channel importance by comparing channel responses under **modality-wise zero-masking** against a **multimodal reference**.
+CCAP evaluates channel importance by comparing channel responses under **modality-wise zero-masking** against a **multimodal reference**.
 
 ### 1) Paired input and three masking conditions
 
@@ -41,7 +41,7 @@ CMC-ASP evaluates channel importance by comparing channel responses under **moda
 ### 2) Channel response statistic
 
 For a target layer (or filter) $F$ and output channel $C$, let $O_{F,C}(\cdot)$ denote the channel activation.  
-CMC-ASP summarizes activation magnitude using the L1 norm and computes dataset-level expectations over a calibration set $D_{\mathrm{cal}}$.
+CCAP summarizes activation magnitude using the L1 norm and computes dataset-level expectations over a calibration set $D_{\mathrm{cal}}$.
 
 <p align="center">
   <img src="Eq/eq4_5.png" width="350" alt="Normalized sensitivities for Noisy and BCM"/>
@@ -49,7 +49,7 @@ CMC-ASP summarizes activation magnitude using the L1 norm and computes dataset-l
 
 ### 3) Normalized sensitivities and final importance
 
-CMC-ASP computes normalized sensitivities by measuring how well each channel response is preserved under each masked condition relative to the multimodal reference.
+CCAP computes normalized sensitivities by measuring how well each channel response is preserved under each masked condition relative to the multimodal reference.
 The final importance score is obtained by a symmetric aggregation of the two sensitivities:
 
 <p align="center">

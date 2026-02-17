@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CMC-ASP — Multimodal Speech Enhancement (Audio + Spectrogram Demos)</title>
+  <title>CCAP — Multimodal Speech Enhancement (Audio + Spectrogram Demos)</title>
 
   <!-- Optional: nicer font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -333,7 +333,7 @@
     }
     .filelink:hover{ color: rgba(255,255,255,0.90); }
 
-    /* Highlight CMC-ASP cell */
+    /* Highlight CCAP cell */
     .highlight{
       padding: 12px;
       border-radius: 16px;
@@ -415,8 +415,8 @@
   <div class="topbar">
     <div class="topbar-inner">
       <div class="brand">
-        <div class="title">CMC-ASP Demo Page</div>
-        <div class="subtitle">Audio & spectrogram comparisons (PP / TP / BN / MANU / CMC-ASP)</div>
+        <div class="title">CCAP Demo Page</div>
+        <div class="subtitle">Audio & spectrogram comparisons (PP / TP / BN / MANU / CCAP)</div>
       </div>
       <div class="navchips" id="navchips"></div>
     </div>
@@ -424,16 +424,16 @@
 
   <div class="container">
     <div class="hero">
-      <h1>CMC-ASP: Fusion-aware Compression for Multimodal Speech Enhancement</h1>
+      <h1>CCAP: Fusion-aware Compression for Multimodal Speech Enhancement</h1>
       <p>
-        <b>One-line Summary (EN):</b> Side-by-side qualitative demos (audio + log spectrogram) comparing baseline pruning methods and CMC-ASP on multimodal SE models.
+        <b>One-line Summary (EN):</b> Side-by-side qualitative demos (audio + log spectrogram) comparing baseline pruning methods and CCAP on multimodal SE models.
         <br/>
         This page is generated from the uploaded folders under <code>WAV/</code>. If you move <code>index.html</code> into a different folder, update <code>BASE</code> in the script.
       </p>
 
       <div class="meta-row">
         <div class="badges">
-          <div class="badge"><span class="dot"></span> Ours: CMC-ASP</div>
+          <div class="badge"><span class="dot"></span> Ours: CCAP</div>
           <div class="badge"><span class="dot green"></span> Models: Attention-based Early Fusion DCCRN [5] / MMINet [6] / LAU-Net [7]</div>
           <div class="badge"><span class="dot warn"></span> Samples: Male, Female</div>
         </div>
@@ -463,7 +463,7 @@
           <p>
             This page provides side-by-side comparisons of enhanced outputs from three representative multimodal speech enhancement models:
             Attention-based Early Fusion DCCRN <b>[5]</b>, MMINet <b>[6]</b>, and LAU-Net <b>[7]</b>.
-            For each model, we compare CMC-ASP against common structured pruning baselines (PP <b>[1]</b>, TP <b>[2]</b>, BN-slimming <b>[3]</b>, and MANU <b>[4]</b>)
+            For each model, we compare CCAP against common structured pruning baselines (PP <b>[1]</b>, TP <b>[2]</b>, BN-slimming <b>[3]</b>, and MANU <b>[4]</b>)
             using paired <i>audio</i> and <i>log-magnitude spectrograms</i>.
           </p>
           <p>
@@ -573,7 +573,7 @@
       { name: "Noisy ACM",          wavSuffix: "_noisy.wav",  specSuffix: "_noisy.PNG",    specFallback: "_noisy.PNG" },
       { name: "BCM",               wavSuffix: "_bcm.wav",    specSuffix: "_bcm.PNG" },
       { name: "Clean ACM",         wavSuffix: "_clean.wav",  specSuffix: "_acm.PNG",      specFallback: "_noisy.PNG" },
-      { name: "CMC-ASP",           wavSuffix: "_CMCASP.wav", specSuffix: "_cmcasp.PNG",   highlight: true },
+      { name: "CCAP",           wavSuffix: "_CMCASP.wav", specSuffix: "_cmcasp.PNG",   highlight: true },
     ];
 
     const COLS_BOTTOM = [
@@ -699,7 +699,7 @@
       linkPng.style.display = "none";
       cell.appendChild(linkPng);
 
-      // Highlight CMC-ASP
+      // Highlight CCAP
       if (col.highlight){
         cell.classList.add("highlight");
       }

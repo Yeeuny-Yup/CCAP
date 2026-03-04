@@ -4,7 +4,7 @@
 
 This repository provides the **channel scoring utilities** of **CCAP** (Cross-modal Consistency–Aware structured Pruning).
 Specifically, it implements:
-- **Modality-wise zero-masking** (Noisy-ACM-only / BCM-only) at the input,
+- **Modality-wise zero-masking** (Noisy ACM-only / BCM-only) at the input,
 - **Hook-based activation extraction** at target layers,
 - **CCAP sensitivities** and **importance scores** defined in the paper.
 
